@@ -1,0 +1,49 @@
+PY-Sys 1.5.1 — cara memasang
+======================
+
+1. Seret PY-Sys ke folder Applications (di jendela ini).
+2. Buka Applications, lalu klik dua kali PY-Sys.
+
+Kalau muncul peringatan "PY-Sys tidak dapat dibuka" / "pengembang tidak dikenal":
+   • Buka System Settings → Privacy & Security
+   • Gulir ke bawah, klik "Open Anyway" (Tetap Buka) di samping PY-Sys
+   • Konfirmasi dengan password Mac
+
+Atau lewat Terminal (sekali saja):
+   xattr -dr com.apple.quarantine /Applications/PY-Sys.app
+
+Syarat: Mac Apple Silicon (M1/M2/M3/M4…) atau Intel, dengan macOS 13 Ventura atau lebih baru.
+Ikon PY-Sys muncul di menu bar (kanan atas), bukan di Dock.
+
+Baru di versi 1.1 — Klik Kanan+ (Utility)
+   • Aktifkan di PY-Sys → Utility → Klik Kanan+.
+   • Di Finder/Desktop: tahan Option + klik kanan, atau klik tombol tengah mouse.
+   • Atau: klik kanan file → Quick Actions → "PY-Sys: Klik Kanan+".
+   • Izinkan PY-Sys di Privacy & Security → Accessibility dan → Automation (Finder).
+
+Baru di versi 1.2
+   • Monitoring › Agen AI: Claude Code, Codex, Gemini CLI, Ollama, MLX, skrip Node/Python —
+     RAM & CPU per proses, jeda/lanjutkan/hentikan, peringatan bila CPU tinggi terlalu lama.
+   • Monitoring › Browser: RAM per browser (tab, ekstensi, GPU), jumlah tab, proses halaman terberat.
+   • Pengaturan › Tampilan di menu bar: pilih RAM, CPU, suhu, jaringan, swap, jumlah agen AI.
+
+Baru di versi 1.3
+   • Monitoring › Riwayat: grafik RAM, tekanan, swap, CPU, suhu untuk 24 jam / 7 hari,
+     tulis SSD per hari + perkiraan sisa umur SSD, dan saran restart bila perlu.
+   • Cleaner › Mode fokus: profil kerja (Riset AI, Menulis, Presentasi, atau buatan sendiri)
+     yang membekukan/menutup app di luar profil dengan satu klik.
+   • Cleaner › Tab browser: simpan & tutup tab (Chrome, Edge, Brave, Arc, Vivaldi, Opera, Safari),
+     tutup tab duplikat, buka lagi kapan saja.
+
+Baru di versi 1.4
+   • Utility › Jendela: atur jendela dengan ⌃⌥ + panah/U/I/J/K/D/F/G/E/T/↩/C, pindah monitor ⌃⌥⌘←/→,
+     simpan & pulihkan tata letak untuk setiap susunan monitor (otomatis saat monitor dipasang lagi).
+   • Utility › Clipboard: riwayat salin-tempel, buka dengan ⌃⌥V, sematkan item penting.
+   • Utility › Monitor: kecerahan monitor eksternal lewat DDC + peredup software untuk semua layar.
+   • Utility › Jadwal: jalankan tugas otomatis (bekukan app idle, bersihkan cache, mode fokus, pengingat, dll).
+
+Baru di versi 1.5
+   • Cleaner › Uninstaller: hapus aplikasi beserta file sisanya di ~/Library (lewat Sampah).
+   • Cleaner › File besar & duplikat: temukan file besar dan salinan identik.
+   • Utility › Alat › Ekspor laporan sistem (PDF).
+   • Pengaturan › Pembaruan (GitHub Releases) dan tombol "Deskripsi program & fitur versi terbaru".
