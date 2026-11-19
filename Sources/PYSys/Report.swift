@@ -203,6 +203,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.6.5", "Tombol daya di samping Keluar: kunci layar, tidur, keluar akun, restart, dan matikan, dengan konfirmasi.",
+                "Power button next to Quit: lock screen, sleep, log out, restart and shut down, with confirmation."),
         Change("1.6.4", "Pilihan warna Kustom di menu tema cepat kini membuka panel slider warna.",
                 "Choosing Custom in the quick theme menu now opens a colour slider panel."),
         Change("1.6.3", "Ikon fitur berwarna per kategori (bisa diganti 4 gaya), warna aksen pilihan (oranye, grafit, aksen macOS, biru, hijau, ungu, merah muda, teal, kustom), mode Gelap pekat, menu tema cepat, tombol Bebaskan RAM di Beranda, repo pembaruan bawaan.",

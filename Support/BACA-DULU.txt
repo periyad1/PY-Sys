@@ -1,4 +1,4 @@
-PY-Sys 1.6.4 — cara memasang
+PY-Sys 1.6.5 — cara memasang
 ======================
 
 1. Seret PY-Sys ke folder Applications (di jendela ini).
@@ -64,3 +64,6 @@ Baru di versi 1.6.3
      lewat ikon palet di kanan atas panel atau Pengaturan → Tema.
    • Tombol Bebaskan RAM langsung di Beranda.
    • Pembaruan otomatis langsung aktif (repo resmi periyad1/PY-Sys) dengan notifikasi saat ada versi baru.
+
+Baru di versi 1.6.5
+   • Tombol daya (⏻) di samping Keluar: Kunci layar, Tidur, Keluar akun, Restart, Matikan.

@@ -121,6 +121,7 @@ struct RootView: View {
                 }
                 Spacer()
                 ShortcutBar()
+                PowerMenu()
                 Button(tr("Keluar", "Quit")) {
                     freezer.thawAll()
                     NSApp.terminate(nil)

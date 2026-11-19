@@ -133,19 +133,7 @@ final class HistoryStore: ObservableObject {
         Notifier.post(title: tr("Saran: restart Mac", "Suggestion: restart your Mac"), body: reasons.joined(separator: " "))
     }
 
-    static func restartMac() {
-        let a = NSAlert()
-        a.messageText = tr("Restart Mac sekarang?", "Restart your Mac now?")
-        a.informativeText = tr("macOS akan meminta Anda menyimpan dokumen yang belum disimpan.",
-                               "macOS will ask you to save any unsaved documents.")
-        a.addButton(withTitle: "Restart")
-        a.addButton(withTitle: tr("Batal", "Cancel"))
-        NSApp.activate(ignoringOtherApps: true)
-        guard a.runModal() == .alertFirstButtonReturn else { return }
-        HistoryStore.shared.save()
-        var err: NSDictionary?
-        _ = NSAppleScript(source: "tell application \"System Events\" to restart")?.executeAndReturnError(&err)
-    }
+    static func restartMac() { Power.perform(.restart) }
 
     // MARK: Agregasi untuk grafik
 
