@@ -46,6 +46,7 @@ struct RootView: View {
                 PressureBadge(level: core.mem.pressure)
             }
             UpdateBanner()
+            if ui.customColorOpen { CustomColorCard(settings: settings) }
 
             if let t = current {
                 HStack {
@@ -619,6 +620,7 @@ final class UIState: ObservableObject {
     @Published var focusEdit: String?
     @Published var tabSel: Set<String> = []
     @Published var appSearch = ""
+    @Published var customColorOpen = false
 }
 
 // MARK: - Shortcut aplikasi sistem

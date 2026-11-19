@@ -25,7 +25,7 @@ enum Theme {
 
     /// Kunci perubahan tema, dipakai untuk menggambar ulang seluruh panel.
     static func key(_ s: Settings) -> String {
-        "\(s.accentPreset)|\(Int(s.accentHue))|\(s.iconStyle)|\(s.themeMode)|\(s.bgKind)|\(s.bgImageName)"
+        "\(s.accentPreset)|\(s.iconStyle)|\(s.themeMode)|\(s.bgKind)|\(s.bgImageName)"
     }
 
     static func applyAppearance(_ mode: String) {
@@ -447,8 +447,14 @@ struct QuickThemeMenu: View {
                 ForEach(IconStyle.allCases) { Text("\($0.letter) · \($0.title)").tag($0.rawValue) }
             }
             .pickerStyle(.inline)
-            Picker(tr("Warna aksen", "Accent color"), selection: $settings.accentPreset) {
-                ForEach(AccentPreset.allCases) { Text($0.title).tag($0.rawValue) }
+            Picker(tr("Warna aksen", "Accent color"), selection: Binding(
+                get: { settings.accentPreset },
+                set: { v in
+                    settings.accentPreset = v
+                    // Kustom butuh slider warna: tampilkan panel kecil di atas panel PY-Sys
+                    UIState.shared.customColorOpen = (v == AccentPreset.custom.rawValue)
+                })) {
+                ForEach(AccentPreset.allCases) { Text($0 == .custom ? $0.title + "…" : $0.title).tag($0.rawValue) }
             }
             .pickerStyle(.inline)
             Divider()
@@ -466,5 +472,39 @@ struct QuickThemeMenu: View {
         .menuIndicator(.hidden)
         .fixedSize()
         .help(tr("Tema cepat", "Quick theme"))
+    }
+}
+
+
+/// Panel kecil pemilih warna kustom, muncul setelah memilih "Kustom…" di menu tema cepat.
+struct CustomColorCard: View {
+    @ObservedObject var settings: Settings
+    @ObservedObject private var ui = UIState.shared
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Circle().fill(Theme.accent).frame(width: 14, height: 14)
+                Text(tr("Warna aksen kustom", "Custom accent color")).font(.callout.bold())
+                Spacer()
+                Button(tr("Selesai", "Done")) { ui.customColorOpen = false }
+                    .buttonStyle(.borderedProminent).controlSize(.small)
+            }
+            HueSlider(hue: $settings.accentHue)
+            HStack(spacing: 8) {
+                Text(tr("Contoh:", "Preview:")).font(.caption).foregroundStyle(.secondary)
+                Button(tr("Tombol", "Button")) {}.buttonStyle(.borderedProminent).controlSize(.small)
+                Toggle("", isOn: .constant(true)).toggleStyle(.switch).labelsHidden().controlSize(.mini)
+                Text(tr("Tautan", "Link")).font(.caption.bold()).foregroundStyle(Theme.accent)
+                Spacer()
+            }
+            .allowsHitTesting(false)
+            Text(tr("Geser untuk memilih warna. PY-Sys otomatis memakai versi lebih gelap di mode terang dan lebih terang di mode gelap supaya tetap terbaca.",
+                    "Slide to pick a colour. PY-Sys uses a darker shade in light mode and a lighter one in dark mode so it stays readable."))
+                .font(.caption2).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(10)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color.primary.opacity(0.06)))
+        .tint(Theme.accent)
     }
 }

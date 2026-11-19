@@ -203,6 +203,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.6.4", "Pilihan warna Kustom di menu tema cepat kini membuka panel slider warna.",
+                "Choosing Custom in the quick theme menu now opens a colour slider panel."),
         Change("1.6.3", "Ikon fitur berwarna per kategori (bisa diganti 4 gaya), warna aksen pilihan (oranye, grafit, aksen macOS, biru, hijau, ungu, merah muda, teal, kustom), mode Gelap pekat, menu tema cepat, tombol Bebaskan RAM di Beranda, repo pembaruan bawaan.",
                 "Feature icons coloured by category (4 styles), accent presets (orange, graphite, macOS accent, blue, green, purple, pink, teal, custom), Pure dark mode, quick theme menu, Free up RAM on Home, built-in update repo."),
         Change("1.6.2", "Keamanan: shortcut Desktop tanpa AppleScript, nama file aneh tidak bisa menyisipkan perintah, pembaruan lebih kebal, agen AI yang dijeda pulih setelah crash, SHA-256 di catatan rilis.",
