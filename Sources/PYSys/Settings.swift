@@ -297,7 +297,7 @@ extension AppTab {
         case .scheduler: return "jadwal schedule tugas task otomatis"
         case .scroll: return "scroll mouse trackpad"
         case .tools: return "info sistem baterai pdf laporan report"
-        case .settings: return "bahasa language tema theme pembaruan update login"
+        case .settings: return "bahasa language tema theme pembaruan update login ekspor impor export import cadangan backup crash laporan report"
         default: return ""
         }
     }
@@ -350,7 +350,7 @@ enum Brand {
 
 enum AppInfo {
     static let name = "PY-Sys"
-    static let version = "1.7 (2026)"
+    static let version = "1.7.1 (2026)"
     static let author = "Periyadi"
     static let email = "periyadi@telkomuniversity.ac.id"
 }

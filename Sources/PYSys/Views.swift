@@ -582,6 +582,9 @@ struct SettingsTab: View {
             UpdateSection()
 
             Divider()
+            MaintenanceSection()
+
+            Divider()
             Text(tr("Tentang \(AppInfo.name)", "About \(AppInfo.name)")).font(.subheadline.bold())
             Button {
                 AboutWindow.show()

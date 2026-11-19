@@ -10,7 +10,14 @@ Semua fitur memakai API publik macOS: tanpa root, tanpa mematikan SIP, dan tidak
 
 **[⬇︎ Unduh versi terbaru (DMG)](../../releases/latest)**
 
-Saat pertama dibuka, **panduan awal 4 langkah** membantu memilih bahasa, memberi izin (dengan status ✓/✗ langsung), dan mengatur tampilan. Panduan bisa dibuka lagi di Pengaturan → Tampilkan panduan awal.
+## Sekilas
+
+- **Beranda**: ringkasan RAM, swap, CPU, dan suhu; kolom cari fitur; hingga 10 fitur favorit; semua fitur dalam grid per kategori.
+- **Bebaskan RAM** satu klik: hasil sebelum → sesudah, daftar app yang dibekukan, app yang dilewati beserta alasannya, dan tombol "Bekukan lebih banyak".
+- **Panduan awal** 4 langkah saat pertama dibuka: bahasa, izin (status ✓/✗ langsung), tampilan, dan tips. Bisa dibuka lagi di Pengaturan → Tampilkan panduan awal.
+- **Tampilan**: 4 gaya ikon (Monokrom, Per kategori, Per fitur, Garis), warna aksen (oranye PY-Sys, grafit, biru sistem, dan lainnya, termasuk warna bebas), mode Terang/Gelap/Gelap pekat, lewat ikon palet di kepala panel.
+- **Cadangan & laporan masalah**: ekspor/impor pengaturan ke Mac lain, dan ringkasan crash yang bisa disalin atau dilaporkan di GitHub (tidak ada yang dikirim otomatis).
+- **Tombol daya ⏻** di kaki panel: kunci layar, tidur, keluar, restart, dan matikan, dengan app beku dicairkan dulu dengan aman.
 
 ## Fitur
 
@@ -47,7 +54,7 @@ Saat pertama dibuka, **panduan awal 4 langkah** membantu memilih bahasa, memberi
 | Scroll Reverser | Arah scroll terpisah untuk trackpad dan mouse |
 | Alat | Info sistem, kesehatan baterai, ekspor laporan PDF |
 
-Juga: dua bahasa (Indonesia/English), tema, widget menu bar, dan pembaruan otomatis dari GitHub Releases.
+Juga: dua bahasa (Indonesia/English), widget menu bar (RAM, CPU, suhu, jaringan, swap, agen AI), mode hemat daya saat panel tertutup, dan pembaruan otomatis satu klik dari GitHub Releases.
 
 ## Memasang
 
@@ -55,7 +62,7 @@ Juga: dua bahasa (Indonesia/English), tema, widget menu bar, dan pembaruan otoma
 2. Buka DMG, seret **PY-Sys** ke **Applications**, lalu buka.
 3. (Opsional) Cek keaslian: `shasum -a 256 ~/Downloads/PY-Sys-x.y.z.dmg` harus sama dengan kode SHA-256 di halaman rilis.
 4. Bila muncul peringatan "pengembang tidak dikenal": **System Settings → Privacy & Security → Open Anyway**.
-5. Untuk Jendela, Clipboard, Klik Kanan+, dan Scroll Reverser: izinkan PY-Sys di **Privacy & Security → Accessibility**.
+5. Panduan awal muncul dan menuntun pemberian izin. Accessibility dibutuhkan untuk Jendela, Clipboard, Klik Kanan+, dan Scroll Reverser.
 6. Pembaruan otomatis sudah aktif sejak awal (repo resmi `periyad1/PY-Sys`). PY-Sys memberi notifikasi saat ada versi baru dan hanya memasang rilis yang ditandatangani pembuat resmi.
 
 ## Build dari kode
@@ -67,8 +74,18 @@ Butuh Command Line Tools (`xcode-select --install`), tidak perlu Xcode lengkap.
 ./build.sh --install  # build universal (arm64 + x86_64) dan pasang di /Applications
 ./build.sh --dmg      # buat build/PY-Sys-<versi>.dmg
 ./build.sh --all      # keduanya
-./release.sh "catatan" # build DMG, push, dan buat GitHub Release
 ```
+
+### Merilis
+
+Perbaikan kecil dikumpulkan dulu, lalu dirilis bersama, supaya pengguna tidak terlalu sering mendapat notifikasi pembaruan. Semua catatan ada di [CATATAN-RILIS.md](CATATAN-RILIS.md).
+
+```bash
+./release.sh --simpan "Perbaiki teks X"   # commit & push kode saja, catatan masuk "Belum dirilis"
+./release.sh                              # rilis: build DMG, push, GitHub Release berisi semua catatan "Belum dirilis"
+```
+
+Setiap push otomatis di-build oleh GitHub Actions (lencana **Build check** di atas).
 
 ---
 
@@ -76,6 +93,8 @@ Butuh Command Line Tools (`xcode-select --install`), tidak perlu Xcode lengkap.
 
 PY-Sys is a menu bar app that monitors, cleans and looks after **any Mac, whatever its RAM** (8, 16, 24 GB or more), on Apple Silicon or Intel with macOS 13 Ventura or later. It helps most on 8 GB Macs running many browser tabs, several displays and AI agents, and keeps larger Macs tidy and well monitored too. It uses only public macOS APIs: no root, no SIP changes, no system files modified.
 
-Download the latest DMG from [Releases](../../releases/latest), drag PY-Sys to Applications, and allow it under Privacy & Security if macOS warns about an unidentified developer.
+Highlights: a Home grid with favorites and search, one-click Free RAM with a before/after report, a 4-step welcome guide for permissions and appearance, four icon styles with accent colors and dark modes, a power menu (lock, sleep, log out, restart, shut down), settings export/import, and simple crash reports you can send on GitHub.
+
+Download the latest DMG from [Releases](../../releases/latest), drag PY-Sys to Applications, and allow it under Privacy & Security if macOS warns about an unidentified developer. The welcome guide walks you through the permissions.
 
 © 2026 Periyadi · periyadi@telkomuniversity.ac.id

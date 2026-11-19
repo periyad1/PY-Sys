@@ -190,6 +190,7 @@ enum FeatureCatalog {
                 Item(symbol: "calendar.badge.clock", title: tr("Jadwal", "Schedule"), detail: tr("Tugas perawatan otomatis pada jam tertentu.", "Automatic maintenance tasks at set times."), since: "1.4"),
                 Item(symbol: "arrow.up.arrow.down", title: "Scroll Reverser", detail: tr("Arah scroll terpisah untuk trackpad dan mouse.", "Separate scroll direction for trackpad and mouse."), since: "1.0"),
                 Item(symbol: "hand.wave", title: tr("Panduan awal", "Welcome guide"), detail: tr("4 langkah untuk pengguna baru: bahasa, izin dengan status langsung, gaya ikon, aksen, dan favorit.", "4 steps for new users: language, permissions with live status, icon style, accent and favorites."), since: "1.7"),
+                Item(symbol: "externaldrive.badge.timemachine", title: tr("Cadangan & laporan masalah", "Backup & problem reports"), detail: tr("Ekspor/impor pengaturan ke Mac lain; ringkasan crash untuk dilaporkan di GitHub.", "Export/import settings to another Mac; crash summaries to report on GitHub."), since: "1.7.1"),
                 Item(symbol: "wrench.and.screwdriver", title: tr("Alat", "Tools"), detail: tr("Info sistem, kesehatan baterai, ekspor laporan PDF.", "System info, battery health, PDF report export."), since: "1.5"),
             ]),
         ]
@@ -204,12 +205,14 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.7.1", "Ekspor/impor pengaturan untuk pindah Mac atau cadangan. Laporan masalah sederhana: pemberitahuan setelah crash, salin, simpan, atau laporkan di GitHub. Teks riwayat 1.6.7 diperbaiki (20 detik).",
+                "Export/import settings to move Macs or keep a backup. Simple problem reports: a notice after a crash, then copy, save or report on GitHub. Fixed the 1.6.7 changelog text (20 seconds)."),
         Change("1.7", "Panduan awal 4 langkah untuk pengguna baru (bahasa, izin dengan status ✓/✗, tampilan, tips). Bisa dibuka lagi di Pengaturan. Setiap perubahan kode kini dicek build otomatis di GitHub.",
                 "4-step welcome guide for new users (language, permissions with ✓/✗ status, appearance, tips). Reopen it from Settings. Every code change is now build-checked automatically on GitHub."),
         Change("1.6.8", "Ikon palet dan tombol daya tidak lagi tampil berbingkai saat panel dibuka ulang.",
                 "The palette and power buttons no longer show a focus outline when the panel reopens."),
-        Change("1.6.7", "Kotak hasil Bebaskan RAM di Beranda bisa ditutup (×) dan hilang sendiri setelah 5 menit.",
-                "The Free up RAM result on Home can be closed (×) and hides itself after 5 minutes."),
+        Change("1.6.7", "Kotak hasil Bebaskan RAM di Beranda bisa ditutup (×) dan hilang sendiri setelah 20 detik (berhenti saat kursor di atasnya).",
+                "The Free up RAM result on Home can be closed (×) and hides itself after 20 seconds (paused while the pointer is over it)."),
         Change("1.6.7", "Kotak hasil Bebaskan RAM bisa ditutup dengan × dan hilang sendiri 20 detik setelah hasilnya keluar.",
                 "The Free up RAM result can be closed with × and hides itself 20 seconds after the result is in."),
         Change("1.6.6", "Bebaskan RAM baru: hasil langsung terlihat, RAM sebelum → sesudah, alasan app yang dilewati, Bekukan lebih banyak, dan tombol Tutup untuk pemakai RAM terbesar.",

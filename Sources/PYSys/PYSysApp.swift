@@ -32,6 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         TaskScheduler.shared.start()
         Updater.shared.startAuto()
         Theme.applyAppearance(AetherCore.shared.settings.themeMode)
+        CrashReports.shared.checkOnLaunch()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
