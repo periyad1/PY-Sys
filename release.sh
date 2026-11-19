@@ -13,6 +13,14 @@ DMG="build/PY-Sys-${VERSION}.dmg"
 
 command -v gh >/dev/null || { echo "✖ GitHub CLI belum terpasang: brew install gh"; exit 1; }
 gh auth status >/dev/null 2>&1 || { echo "✖ Belum login GitHub: gh auth login"; exit 1; }
+# File .github/workflows hanya bisa di-push bila token gh punya izin "workflow".
+if [[ -d .github/workflows ]]; then
+    SCOPES="$(gh auth status 2>&1 || true)"
+    if [[ "${SCOPES}" != *workflow* ]]; then
+        echo "→ Menambah izin 'workflow' ke login GitHub (sekali saja, browser akan terbuka)…"
+        gh auth refresh -h github.com -s workflow
+    fi
+fi
 
 if gh release view "$TAG" >/dev/null 2>&1; then
     echo "✖ Rilis ${TAG} sudah ada di GitHub. Naikkan versi di Support/Info.plist dulu."

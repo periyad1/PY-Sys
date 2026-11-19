@@ -1,4 +1,4 @@
-PY-Sys 1.6.8 — cara memasang
+PY-Sys 1.7 — cara memasang
 ======================
 
 1. Seret PY-Sys ke folder Applications (di jendela ini).
@@ -71,3 +71,7 @@ Baru di versi 1.6.5
 Baru di versi 1.6.6
    • Bebaskan RAM menampilkan hasil jelas: app yang dibekukan, RAM sebelum → sesudah, alasan app dilewati,
      tombol Bekukan lebih banyak, dan tombol Tutup untuk pemakai RAM terbesar.
+
+Baru di versi 1.7
+   • Panduan awal 4 langkah saat PY-Sys pertama dibuka: bahasa, izin (status ✓/✗ langsung), tampilan, dan tips.
+   • Buka lagi kapan saja: Pengaturan → Tampilkan panduan awal.

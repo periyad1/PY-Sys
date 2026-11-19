@@ -589,6 +589,12 @@ struct SettingsTab: View {
                 Label(tr("Deskripsi program & fitur versi terbaru", "Program description & latest features"), systemImage: "info.circle")
             }
             .controlSize(.small)
+            Button {
+                OnboardingWindow.show()
+            } label: {
+                Label(tr("Tampilkan panduan awal", "Show welcome guide"), systemImage: "sparkles")
+            }
+            .controlSize(.small)
             VStack(spacing: 4) {
                 StatRow(title: tr("Versi", "Version"), value: AppInfo.version)
                 StatRow(title: tr("Pembuat", "Author"), value: AppInfo.author)

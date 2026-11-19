@@ -1,5 +1,7 @@
 <p align="center"><img src="Support/logo.png" width="128" alt="Logo PY-Sys"></p>
 
+<p align="center"><a href="https://github.com/periyad1/PY-Sys/actions/workflows/build.yml"><img src="https://github.com/periyad1/PY-Sys/actions/workflows/build.yml/badge.svg" alt="Build check"></a></p>
+
 # PY-Sys — pemantau, pembersih & utilitas Mac di menu bar
 
 PY-Sys adalah aplikasi menu bar untuk **semua Mac dengan RAM berapa pun** (8, 16, 24 GB atau lebih), Apple Silicon maupun Intel, macOS 13 Ventura atau lebih baru. Manfaatnya paling terasa di Mac 8 GB yang dipakai untuk banyak tab browser, beberapa monitor, dan agen AI, tetapi Mac dengan RAM besar juga terbantu untuk tetap rapi, terpantau, dan produktif.
@@ -7,6 +9,8 @@ PY-Sys adalah aplikasi menu bar untuk **semua Mac dengan RAM berapa pun** (8, 16
 Semua fitur memakai API publik macOS: tanpa root, tanpa mematikan SIP, dan tidak mengubah file sistem.
 
 **[⬇︎ Unduh versi terbaru (DMG)](../../releases/latest)**
+
+Saat pertama dibuka, **panduan awal 4 langkah** membantu memilih bahasa, memberi izin (dengan status ✓/✗ langsung), dan mengatur tampilan. Panduan bisa dibuka lagi di Pengaturan → Tampilkan panduan awal.
 
 ## Fitur
 

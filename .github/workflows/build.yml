@@ -1,0 +1,42 @@
+# Cek build otomatis: setiap push / pull request ke main dikompilasi di Mac milik GitHub.
+# Kalau kode rusak, tanda ✗ merah muncul di commit/PR sebelum dirilis.
+name: Build check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Versi alat
+        run: swift --version && sw_vers
+
+      - name: Cek sintaks skrip
+        run: for f in *.sh; do bash -n "$f" && echo "ok $f"; done
+
+      - name: Cek Info.plist & versi
+        run: |
+          plutil -lint Support/Info.plist
+          V="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Support/Info.plist)"
+          grep -q "\"${V} (" Sources/PYSys/Settings.swift || { echo "::error::AppInfo.version tidak sama dengan Info.plist (${V})"; exit 1; }
+
+      - name: Build universal (Apple Silicon + Intel)
+        run: swift build -c release --arch arm64 --arch x86_64
+
+      - name: Cek arsitektur
+        run: lipo -info .build/apple/Products/Release/PYSys

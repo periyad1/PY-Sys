@@ -189,6 +189,7 @@ enum FeatureCatalog {
                 Item(symbol: "sun.max", title: tr("Monitor", "Displays"), detail: tr("Kecerahan DDC dan peredup software untuk semua layar.", "DDC brightness and a software dimmer for every display."), since: "1.4"),
                 Item(symbol: "calendar.badge.clock", title: tr("Jadwal", "Schedule"), detail: tr("Tugas perawatan otomatis pada jam tertentu.", "Automatic maintenance tasks at set times."), since: "1.4"),
                 Item(symbol: "arrow.up.arrow.down", title: "Scroll Reverser", detail: tr("Arah scroll terpisah untuk trackpad dan mouse.", "Separate scroll direction for trackpad and mouse."), since: "1.0"),
+                Item(symbol: "hand.wave", title: tr("Panduan awal", "Welcome guide"), detail: tr("4 langkah untuk pengguna baru: bahasa, izin dengan status langsung, gaya ikon, aksen, dan favorit.", "4 steps for new users: language, permissions with live status, icon style, accent and favorites."), since: "1.7"),
                 Item(symbol: "wrench.and.screwdriver", title: tr("Alat", "Tools"), detail: tr("Info sistem, kesehatan baterai, ekspor laporan PDF.", "System info, battery health, PDF report export."), since: "1.5"),
             ]),
         ]
@@ -203,6 +204,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.7", "Panduan awal 4 langkah untuk pengguna baru (bahasa, izin dengan status ✓/✗, tampilan, tips). Bisa dibuka lagi di Pengaturan. Setiap perubahan kode kini dicek build otomatis di GitHub.",
+                "4-step welcome guide for new users (language, permissions with ✓/✗ status, appearance, tips). Reopen it from Settings. Every code change is now build-checked automatically on GitHub."),
         Change("1.6.8", "Ikon palet dan tombol daya tidak lagi tampil berbingkai saat panel dibuka ulang.",
                 "The palette and power buttons no longer show a focus outline when the panel reopens."),
         Change("1.6.7", "Kotak hasil Bebaskan RAM di Beranda bisa ditutup (×) dan hilang sendiri setelah 5 menit.",

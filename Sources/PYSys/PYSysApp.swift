@@ -18,6 +18,7 @@ struct PYSysApp: App {
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
+        OnboardingWindow.showIfFirstRun()      // cek dulu sebelum fitur lain menyimpan pengaturan
         NSApp.setActivationPolicy(.accessory)   // tanpa ikon Dock
         Notifier.requestAuthorization()
         AgentMonitor.shared.recoverAfterCrash()

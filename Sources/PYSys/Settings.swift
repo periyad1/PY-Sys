@@ -350,7 +350,7 @@ enum Brand {
 
 enum AppInfo {
     static let name = "PY-Sys"
-    static let version = "1.6.8 (2026)"
+    static let version = "1.7 (2026)"
     static let author = "Periyadi"
     static let email = "periyadi@telkomuniversity.ac.id"
 }
