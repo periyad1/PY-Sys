@@ -127,6 +127,7 @@ struct PowerMenu: View {
         .menuStyle(.borderlessButton)
         .menuIndicator(.hidden)
         .fixedSize()
+        .noFocusRing()
         .help(tr("Kunci, tidur, restart, matikan", "Lock, sleep, restart, shut down"))
     }
 }

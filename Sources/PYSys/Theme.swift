@@ -471,6 +471,7 @@ struct QuickThemeMenu: View {
         .menuStyle(.borderlessButton)
         .menuIndicator(.hidden)
         .fixedSize()
+        .noFocusRing()
         .help(tr("Tema cepat", "Quick theme"))
     }
 }
@@ -506,5 +507,13 @@ struct CustomColorCard: View {
         .padding(10)
         .background(RoundedRectangle(cornerRadius: 10).fill(Color.primary.opacity(0.06)))
         .tint(Theme.accent)
+    }
+}
+
+
+extension View {
+    /// Tanpa bingkai fokus biru (macOS 14+); di macOS 13 fokus sudah dilepas saat panel dibuka.
+    @ViewBuilder func noFocusRing() -> some View {
+        if #available(macOS 14.0, *) { self.focusEffectDisabled() } else { self }
     }
 }

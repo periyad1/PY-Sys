@@ -718,6 +718,11 @@ struct PanelVisibilityWatcher: NSViewRepresentable {
                          NSWindow.didResignKeyNotification] {
                 observers.append(NotificationCenter.default.addObserver(forName: name, object: w, queue: .main, using: report))
             }
+            // Saat panel dibuka, macOS memberi fokus keyboard ke tombol pertama (ikon palet) sehingga muncul
+            // bingkai fokus. Fokus dilepas supaya tidak ada tombol yang tampak "terpilih".
+            observers.append(NotificationCenter.default.addObserver(forName: NSWindow.didBecomeKeyNotification, object: w, queue: .main) { [weak w] _ in
+                DispatchQueue.main.async { w?.makeFirstResponder(nil) }
+            })
             DispatchQueue.main.async { AetherCore.shared.setPanelOpen(w.isVisible && w.occlusionState.contains(.visible)) }
         }
         deinit { observers.forEach { NotificationCenter.default.removeObserver($0) } }

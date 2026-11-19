@@ -203,6 +203,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.6.8", "Ikon palet dan tombol daya tidak lagi tampil berbingkai saat panel dibuka ulang.",
+                "The palette and power buttons no longer show a focus outline when the panel reopens."),
         Change("1.6.7", "Kotak hasil Bebaskan RAM di Beranda bisa ditutup (×) dan hilang sendiri setelah 5 menit.",
                 "The Free up RAM result on Home can be closed (×) and hides itself after 5 minutes."),
         Change("1.6.7", "Kotak hasil Bebaskan RAM bisa ditutup dengan × dan hilang sendiri 20 detik setelah hasilnya keluar.",
