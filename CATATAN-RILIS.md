@@ -5,8 +5,7 @@ Saat `./release.sh` dijalankan, isi bagian itu menjadi catatan rilis versi baru.
 
 ## Belum dirilis
 
-## 1.7.1 — 2026-11-19
-
+- README: bagian English lengkap
 - Ekspor/impor pengaturan (Pengaturan → Cadangan pengaturan) untuk pindah Mac atau cadangan. Sumber pembaruan tidak ikut diimpor.
 - Laporan masalah sederhana (Pengaturan → Laporan masalah): pemberitahuan setelah crash, lalu salin, simpan ke Desktop, atau laporkan di GitHub.
 - Riwayat perubahan 1.6.7 kini menulis waktu yang benar: kotak hasil Bebaskan RAM hilang setelah 20 detik (sebelumnya tertulis 5 menit).

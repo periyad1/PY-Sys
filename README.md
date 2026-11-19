@@ -8,7 +8,9 @@ PY-Sys adalah aplikasi menu bar untuk **semua Mac dengan RAM berapa pun** (8, 16
 
 Semua fitur memakai API publik macOS: tanpa root, tanpa mematikan SIP, dan tidak mengubah file sistem.
 
-**[⬇︎ Unduh versi terbaru (DMG)](../../releases/latest)**
+**[⬇︎ Unduh versi terbaru (DMG)](../../releases/latest)** · [English version ↓](#english)
+
+**Syarat:** macOS 13 Ventura atau lebih baru, yaitu MacBook Pro 2017+, MacBook Air 2018+, MacBook 12″ 2017, iMac 2017+, Mac mini 2018+, serta semua Mac Apple Silicon (M1 dan sesudahnya).
 
 ## Sekilas
 
@@ -91,10 +93,91 @@ Setiap push otomatis di-build oleh GitHub Actions (lencana **Build check** di at
 
 ## English
 
-PY-Sys is a menu bar app that monitors, cleans and looks after **any Mac, whatever its RAM** (8, 16, 24 GB or more), on Apple Silicon or Intel with macOS 13 Ventura or later. It helps most on 8 GB Macs running many browser tabs, several displays and AI agents, and keeps larger Macs tidy and well monitored too. It uses only public macOS APIs: no root, no SIP changes, no system files modified.
+PY-Sys is a menu bar app for **any Mac, whatever its RAM** (8, 16, 24 GB or more), on Apple Silicon or Intel with macOS 13 Ventura or later. It helps most on 8 GB Macs running many browser tabs, several displays and AI agents, and it keeps larger Macs tidy, monitored and productive too.
 
-Highlights: a Home grid with favorites and search, one-click Free RAM with a before/after report, a 4-step welcome guide for permissions and appearance, four icon styles with accent colors and dark modes, a power menu (lock, sleep, log out, restart, shut down), settings export/import, and simple crash reports you can send on GitHub.
+Every feature uses public macOS APIs: no root, no SIP changes, and no system files modified.
 
-Download the latest DMG from [Releases](../../releases/latest), drag PY-Sys to Applications, and allow it under Privacy & Security if macOS warns about an unidentified developer. The welcome guide walks you through the permissions.
+**[⬇︎ Download the latest version (DMG)](../../releases/latest)**
+
+**Requirements:** macOS 13 Ventura or later, which means MacBook Pro 2017+, MacBook Air 2018+, MacBook 12″ 2017, iMac 2017+, Mac mini 2018+, and every Apple Silicon Mac (M1 and later).
+
+### At a glance
+
+- **Home**: a summary of RAM, swap, CPU and temperature; a feature search field; up to 10 favorite features; every feature in a grid by category.
+- **Free up RAM** in one click: a before → after result, the apps that were frozen, the apps that were skipped with the reason, and a "Freeze more" button.
+- **Welcome guide** in 4 steps on first launch: language, permissions (live ✓/✗ status), appearance, and tips. Reopen it from Settings → Show welcome guide.
+- **Appearance**: 4 icon styles (Monochrome, By category, By feature, Outline), accent colors (PY-Sys orange, graphite, system blue and more, including a custom color), and Light/Dark/Pure dark modes, from the palette icon in the panel header.
+- **Backup & problem reports**: export/import settings to another Mac, and a crash summary you can copy or report on GitHub (nothing is sent automatically).
+- **Power button ⏻** in the panel footer: lock screen, sleep, log out, restart and shut down, with frozen apps safely thawed first.
+
+### Features
+
+#### Monitoring
+| Feature | What it does |
+| --- | --- |
+| Dashboard | CPU, GPU, disk, RAM, fans and network on one screen |
+| RAM | Memory pressure, composition (App/Wired/Compressed/Cache), swap, page-ins/outs, 10-minute charts |
+| CPU & GPU | Per-core load (P/E on Apple Silicon), temperature, GPU, load average, top processes |
+| Network & Sensors | Speed, interfaces, public IP; temperatures, fans, power, battery |
+| AI Agents | Claude Code, Codex, Gemini, Ollama, MLX, Node/Python: RAM, CPU, pause/stop, runaway alerts |
+| Browser | RAM per browser split into tabs, extensions and GPU; tab count |
+| History | 24-hour/7-day charts, daily SSD writes, SSD life estimate, restart advice |
+
+#### Cleaner
+| Feature | What it does |
+| --- | --- |
+| Apps & Cryo-Sleep | RAM per app; freezes idle, hidden apps and thaws them when opened |
+| Focus mode | Work profiles that freeze every app outside the profile in one click |
+| Browser tabs | Save & close tabs, close duplicates, reopen any time |
+| Storage | Caches, logs, developer caches, Trash, old downloads |
+| Uninstaller | Removes apps along with their leftover files in ~/Library |
+| Large & duplicate files | Finds large files and identical copies |
+
+#### Utility
+| Feature | What it does |
+| --- | --- |
+| Quick toggles | Quit all apps, keep awake, lock screen, Dark Mode, Dock and more |
+| Right-Click+ | Extra Finder menu: new file, copy path, move to, folder colors |
+| Windows | Snap windows with ⌃⌥, move between displays, save multi-display layouts |
+| Clipboard | Copy history with ⌃⌥V |
+| Displays | DDC brightness and a software dimmer for every display |
+| Schedule | Automatic maintenance tasks at set times |
+| Scroll Reverser | Separate scroll direction for trackpad and mouse |
+| Tools | System info, battery health, PDF report export |
+
+Also: two languages (English/Bahasa Indonesia), menu bar widgets (RAM, CPU, temperature, network, swap, AI agents), power saving while the panel is closed, and one-click automatic updates from GitHub Releases.
+
+### Installing
+
+1. Download **PY-Sys-x.y.z.dmg** from [Releases](../../releases/latest).
+2. Open the DMG, drag **PY-Sys** to **Applications**, then open it.
+3. (Optional) Verify the download: `shasum -a 256 ~/Downloads/PY-Sys-x.y.z.dmg` must match the SHA-256 code on the release page.
+4. If macOS warns about an "unidentified developer": **System Settings → Privacy & Security → Open Anyway**.
+5. The welcome guide appears and walks you through the permissions. Accessibility is needed for Windows, Clipboard, Right-Click+ and Scroll Reverser.
+6. Automatic updates are on from the start (official repo `periyad1/PY-Sys`). PY-Sys notifies you when a new version is out and only installs releases signed by the official author.
+
+### Building from source
+
+Requires the Command Line Tools (`xcode-select --install`); full Xcode is not needed.
+
+```bash
+./make-cert.sh        # once: a local certificate so macOS permissions survive every build
+./build.sh --install  # universal build (arm64 + x86_64), installed in /Applications
+./build.sh --dmg      # creates build/PY-Sys-<version>.dmg
+./build.sh --all      # both
+```
+
+#### Releasing
+
+Small fixes are collected first and released together, so users don't get update notifications too often. All notes live in [CATATAN-RILIS.md](CATATAN-RILIS.md) (release notes, in Indonesian).
+
+```bash
+./release.sh --simpan "Fix text X"   # commit & push code only; the note goes under "Belum dirilis" (unreleased)
+./release.sh                         # release: build DMG, push, GitHub Release with every unreleased note
+```
+
+Every push is built automatically by GitHub Actions (the **Build check** badge at the top).
+
+---
 
 © 2026 Periyadi · periyadi@telkomuniversity.ac.id
