@@ -144,6 +144,24 @@ enum AppGrouper {
 }
 
 enum WindowInfo {
+    /// Nomor monitor (1, 2, …) tempat jendela terbesar milik salah satu PID terlihat; nil bila tidak terlihat.
+    static func screenNumber(of pids: [pid_t]) -> Int? {
+        guard let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements],
+                                                    kCGNullWindowID) as? [[String: Any]] else { return nil }
+        let set = Set(pids)
+        var best: (area: CGFloat, rect: CGRect)?
+        for w in list {
+            guard (w[kCGWindowLayer as String] as? Int) == 0, let pid = w[kCGWindowOwnerPID as String] as? Int,
+                  set.contains(pid_t(pid)), let bd = w[kCGWindowBounds as String],
+                  let r = CGRect(dictionaryRepresentation: bd as! CFDictionary), r.width >= 60, r.height >= 60 else { continue }
+            if best == nil || r.width * r.height > best!.area { best = (r.width * r.height, r) }
+        }
+        guard let r = best?.rect else { return nil }
+        let primaryH = NSScreen.screens.first?.frame.height ?? 0
+        let p = CGPoint(x: r.midX, y: primaryH - r.midY)          // koordinat CG (kiri-atas) → AppKit (kiri-bawah)
+        return (NSScreen.screens.firstIndex { $0.frame.contains(p) } ?? 0) + 1
+    }
+
     /// PID yang punya jendela normal yang sedang terlihat di layar mana pun (termasuk monitor eksternal).
     static func visiblePIDs() -> Set<pid_t> {
         guard let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements],

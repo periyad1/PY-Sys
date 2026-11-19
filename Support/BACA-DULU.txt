@@ -1,4 +1,4 @@
-PY-Sys 1.6.5 — cara memasang
+PY-Sys 1.6.6 — cara memasang
 ======================
 
 1. Seret PY-Sys ke folder Applications (di jendela ini).
@@ -67,3 +67,7 @@ Baru di versi 1.6.3
 
 Baru di versi 1.6.5
    • Tombol daya (⏻) di samping Keluar: Kunci layar, Tidur, Keluar akun, Restart, Matikan.
+
+Baru di versi 1.6.6
+   • Bebaskan RAM menampilkan hasil jelas: app yang dibekukan, RAM sebelum → sesudah, alasan app dilewati,
+     tombol Bekukan lebih banyak, dan tombol Tutup untuk pemakai RAM terbesar.

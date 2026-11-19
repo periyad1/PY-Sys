@@ -382,20 +382,34 @@ final class AetherCore: ObservableObject {
         }
     }
 
-    /// Tombol "Bebaskan RAM": bekukan sekarang semua app idle yang tidak terlihat.
-    func freeUpRAM() {
-        let r = freezer.freezeIdleNow(groups: groups)
-        let limit = UInt64(settings.bloatGB * 1_073_741_824)
-        let bloated = groups.first { $0.isApp && $0.footprint > limit && !freezer.isFrozen($0.mainPID) }
-        var msg = r.count > 0
-            ? tr("\(r.count) app idle dibekukan (±\(Fmt.bytes(r.bytes))); macOS akan mengompres memorinya.",
-                 "\(r.count) idle apps frozen (±\(Fmt.bytes(r.bytes))); macOS will compress their memory.")
-            : tr("Tidak ada app idle yang bisa dibekukan saat ini.", "No idle apps can be frozen right now.")
-        if let b = bloated {
-            msg += tr(" Terbesar: \(b.name) \(Fmt.bytes(b.footprint)), bisa ditutup di tab Aplikasi.",
-                      " Largest: \(b.name) \(Fmt.bytes(b.footprint)), quit it from the Apps tab.")
+    @Published var freeReport: FreeRAMReport?
+    @Published var freeMeasuring = false
+
+    /// Tombol "Bebaskan RAM": bekukan app idle yang aman (aggressive = ikut yang jendelanya terlihat),
+    /// lalu ukur ulang RAM ±15 detik kemudian karena macOS mengompres memorinya bertahap.
+    func freeUpRAM(aggressive: Bool = false) {
+        let before = SystemStats.snapshot()
+        let r = freezer.freeUp(groups: groups, aggressive: aggressive)
+        var rep = FreeRAMReport(date: Date(), beforePct: before.usedFraction * 100, beforePressure: before.pressure,
+                                frozen: r.frozen, skipped: r.skipped)
+        if aggressive, let old = freeReport {
+            // "Bekukan lebih banyak": gabungkan dengan hasil sebelumnya dan pakai angka "sebelum" yang pertama
+            rep = FreeRAMReport(date: old.date, beforePct: old.beforePct, beforePressure: old.beforePressure,
+                                frozen: old.frozen + r.frozen, skipped: r.skipped)
         }
-        freeUpMessage = msg
+        freeReport = rep
+        freeUpMessage = r.frozen.isEmpty
+            ? tr("Tidak ada app idle yang aman dibekukan.", "No idle apps are safe to freeze.")
+            : tr("\(rep.frozen.count) app dibekukan, ±\(Fmt.bytes(rep.frozenBytes)).", "\(rep.frozen.count) apps frozen, about \(Fmt.bytes(rep.frozenBytes)).")
+        freeMeasuring = true
+        let stamp = rep.date
+        DispatchQueue.main.asyncAfter(deadline: .now() + 15) { [weak self] in
+            guard let self, self.freeReport?.date == stamp else { return }
+            let after = SystemStats.snapshot()
+            self.freeReport?.afterPct = after.usedFraction * 100
+            self.freeReport?.afterPressure = after.pressure
+            self.freeMeasuring = false
+        }
     }
 
     /// Daftar baca/tulis per proses hanya dihitung saat tab Ringkasan terbuka.

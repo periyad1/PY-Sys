@@ -58,9 +58,7 @@ struct HomeView: View {
                 .help(tr("Bekukan app idle yang tidak terlihat supaya macOS bisa mengompres memorinya",
                          "Freeze idle, hidden apps so macOS can compress their memory"))
             }
-            if let m = core.freeUpMessage {
-                Text(m).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-            }
+            FreeRAMToast(core: core)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {

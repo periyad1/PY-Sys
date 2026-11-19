@@ -115,6 +115,48 @@ final class Freezer: ObservableObject {
         }
     }
 
+    /// Bebaskan RAM dengan rincian: bekukan yang aman, catat yang dilewati beserta alasannya.
+    /// aggressive = app yang jendelanya terlihat ikut disembunyikan lalu dibekukan.
+    func freeUp(groups: [AppGroup], aggressive: Bool) -> (frozen: [FreeItem], skipped: [FreeItem]) {
+        let front = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        let visible = WindowInfo.visiblePIDs()
+        let multi = NSScreen.screens.count > 1
+        let now = Date()
+        var frozenList: [FreeItem] = []
+        var skipped: [FreeItem] = []
+        for g in groups where g.isApp && g.footprint >= 50 * 1_048_576 {
+            guard let bid = g.bundleID, bid != Bundle.main.bundleIdentifier, g.mainPID != getpid(), !isFrozen(g.mainPID) else { continue }
+            func skip(_ why: String, visible v: Bool = false) {
+                skipped.append(FreeItem(id: g.mainPID, name: g.name, icon: g.icon, bytes: g.footprint, note: why, visible: v))
+            }
+            if Self.protected.contains(bid) { skip(tr("app sistem", "system app")); continue }
+            if settings.whitelist.contains(bid) { skip(tr("whitelist, tidak pernah dibekukan", "whitelist, never frozen")); continue }
+            if g.mainPID == front { skip(tr("app yang sedang aktif", "the active app")); continue }
+            if g.cpu >= settings.cpuGuard { skip(tr("sedang bekerja (CPU \(Int(g.cpu))%)", "busy (CPU \(Int(g.cpu))%)")); continue }
+            if g.pids.contains(where: visible.contains) {
+                if aggressive {
+                    manualFreeze(g)
+                    frozenList.append(FreeItem(id: g.mainPID, name: g.name, icon: g.icon, bytes: g.footprint,
+                                               note: tr("disembunyikan lalu dibekukan", "hidden, then frozen"), visible: true))
+                } else {
+                    let n = WindowInfo.screenNumber(of: g.pids)
+                    skip(multi && n != nil ? tr("jendela terlihat di monitor \(n!)", "window visible on display \(n!)")
+                                           : tr("jendelanya terlihat di layar", "its window is on screen"), visible: true)
+                }
+                continue
+            }
+            freeze(g, manual: false)
+            guard isFrozen(g.mainPID) else { continue }
+            let idle = lastActive[g.mainPID].map { Int(now.timeIntervalSince($0) / 60) }
+            let note: String
+            if let m = idle, m >= 60 { note = tr("tidak dipakai \(m / 60) jam", "unused for \(m / 60) h") }
+            else if let m = idle, m >= 1 { note = tr("tidak dipakai \(m) menit", "unused for \(m) min") }
+            else { note = tr("tidak terlihat dan tidak aktif", "hidden and idle") }
+            frozenList.append(FreeItem(id: g.mainPID, name: g.name, icon: g.icon, bytes: g.footprint, note: note, visible: false))
+        }
+        return (frozenList.sorted { $0.bytes > $1.bytes }, skipped.sorted { $0.bytes > $1.bytes })
+    }
+
     /// Untuk tombol "Bebaskan RAM": abaikan batas waktu idle, tetap hormati whitelist,
     /// jendela yang terlihat, app aktif dan penjaga CPU.
     @discardableResult
@@ -214,4 +256,25 @@ final class Freezer: ObservableObject {
             signalSources.append(src)
         }
     }
+}
+
+
+struct FreeItem: Identifiable {
+    let id: pid_t
+    let name: String
+    let icon: NSImage?
+    let bytes: UInt64
+    let note: String
+    let visible: Bool
+}
+
+struct FreeRAMReport {
+    let date: Date
+    let beforePct: Double
+    let beforePressure: PressureLevel
+    var frozen: [FreeItem]
+    var skipped: [FreeItem]
+    var afterPct: Double?
+    var afterPressure: PressureLevel?
+    var frozenBytes: UInt64 { frozen.reduce(0) { $0 + $1.bytes } }
 }

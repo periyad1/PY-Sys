@@ -40,7 +40,7 @@ struct RootView: View {
             HStack(spacing: 6) {
                 Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 20, height: 20)
                 Text("PY-Sys").font(.system(.headline, design: .rounded).weight(.heavy)).foregroundStyle(Theme.brand)
-                Text("· " + (current?.title ?? tr("Beranda", "Home"))).font(.system(.headline, design: .rounded)).foregroundStyle(.secondary)
+                Text("· " + (current?.title ?? (ui.tab == FreeRAMRoute.tab ? tr("Bebaskan RAM", "Free up RAM") : tr("Beranda", "Home")))).font(.system(.headline, design: .rounded)).foregroundStyle(.secondary)
                 Spacer()
                 QuickThemeMenu(settings: settings)
                 PressureBadge(level: core.mem.pressure)
@@ -107,6 +107,23 @@ struct RootView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.trailing, 4)
+                }
+                .frame(height: 470)
+            } else if ui.tab == FreeRAMRoute.tab {
+                Button {
+                    ui.tab = UIState.home
+                } label: {
+                    HStack(spacing: 2) {
+                        Image(systemName: "chevron.left")
+                        Text(tr("Beranda", "Home"))
+                    }
+                    .font(.callout.weight(.semibold))
+                }
+                .buttonStyle(.borderless)
+                ScrollView {
+                    FreeRAMView(core: core)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.trailing, 4)
                 }
                 .frame(height: 470)
             } else {

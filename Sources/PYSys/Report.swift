@@ -203,6 +203,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.6.6", "Bebaskan RAM baru: hasil langsung terlihat, RAM sebelum → sesudah, alasan app yang dilewati, Bekukan lebih banyak, dan tombol Tutup untuk pemakai RAM terbesar.",
+                "New Free up RAM: clear results, RAM before → after, reasons for skipped apps, Freeze more, and Quit buttons for the largest memory users."),
         Change("1.6.5", "Tombol daya di samping Keluar: kunci layar, tidur, keluar akun, restart, dan matikan, dengan konfirmasi.",
                 "Power button next to Quit: lock screen, sleep, log out, restart and shut down, with confirmation."),
         Change("1.6.4", "Pilihan warna Kustom di menu tema cepat kini membuka panel slider warna.",
