@@ -198,6 +198,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.5.3", "Deskripsi berlaku untuk semua ukuran RAM; uji pertama pembaruan otomatis.",
+                "Description now covers every RAM size; first test of automatic updates."),
         Change("1.5.2", "Pembaruan otomatis: tanda di menu bar, banner di panel, dan pasang versi baru dengan satu klik.",
                 "Automatic updates: a menu bar badge, a banner in the panel, and one-click install of new versions."),
         Change("1.5.1", "Mode hemat: pembaruan data lebih jarang saat panel tertutup, sensor suhu dan GPU dibaca seperlunya.",
@@ -227,8 +229,8 @@ struct AboutView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                Text(tr("PY-Sys adalah aplikasi menu bar untuk memantau, membersihkan, dan merawat Mac, dibuat agar MacBook dengan RAM 8 GB tetap lancar dipakai bertahun-tahun untuk banyak tab browser, dua monitor eksternal, dan agen AI. PY-Sys tidak mengubah sistem dan tidak butuh hak admin: ia membaca data dari macOS, membekukan aplikasi yang tidak dipakai, membersihkan file yang bisa dibuat ulang, dan menyediakan alat produktivitas dalam satu tempat. Berjalan di Mac Apple Silicon dan Intel dengan macOS 13 atau lebih baru.",
-                        "PY-Sys is a menu bar app that monitors, cleans and looks after your Mac, built so an 8 GB MacBook stays smooth for years with many browser tabs, two external monitors and AI agents. It doesn't modify the system or need admin rights: it reads data from macOS, freezes apps you're not using, cleans files that can be rebuilt, and puts productivity tools in one place. Runs on Apple Silicon and Intel Macs with macOS 13 or later."))
+                Text(tr("PY-Sys adalah aplikasi menu bar untuk memantau, membersihkan, dan merawat Mac, untuk semua Mac dengan RAM berapa pun (8, 16, 24 GB atau lebih). Paling terasa manfaatnya di Mac 8 GB yang dipakai untuk banyak tab browser, beberapa monitor, dan agen AI, tetapi juga membantu Mac dengan RAM besar tetap rapi dan terpantau. PY-Sys tidak mengubah sistem dan tidak butuh hak admin: ia membaca data dari macOS, membekukan aplikasi yang tidak dipakai, membersihkan file yang bisa dibuat ulang, dan menyediakan alat produktivitas dalam satu tempat. Berjalan di Mac Apple Silicon dan Intel dengan macOS 13 atau lebih baru.",
+                        "PY-Sys is a menu bar app that monitors, cleans and looks after your Mac, for any Mac, whatever its RAM (8, 16, 24 GB or more). It helps most on 8 GB Macs running many browser tabs, several displays and AI agents, and keeps larger Macs tidy and well monitored too. It doesn't modify the system or need admin rights: it reads data from macOS, freezes apps you're not using, cleans files that can be rebuilt, and puts productivity tools in one place. Runs on Apple Silicon and Intel Macs with macOS 13 or later."))
                     .fixedSize(horizontal: false, vertical: true)
 
                 ForEach(FeatureCatalog.sections) { s in

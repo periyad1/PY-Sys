@@ -333,8 +333,8 @@ struct SSDDailyView: View {
                         "The SSD life estimate appears once SSD health data (smartctl) and daily write data are available."))
                     .font(.caption2).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
-            Text(tr("Lebih dari ±100 GB/hari pada Mac 8 GB biasanya tanda swap berlebihan.",
-                    "More than about 100 GB/day on an 8 GB Mac usually means heavy swapping."))
+            Text(tr("Lebih dari ±100 GB/hari biasanya tanda swap berlebihan (RAM kurang untuk beban kerja Anda).",
+                    "More than about 100 GB/day usually means heavy swapping (not enough RAM for your workload)."))
                 .font(.caption2).foregroundStyle(.secondary)
         }
     }

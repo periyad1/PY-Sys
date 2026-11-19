@@ -1,4 +1,4 @@
-PY-Sys 1.5.2 — cara memasang
+PY-Sys 1.5.3 — cara memasang
 ======================
 
 1. Seret PY-Sys ke folder Applications (di jendela ini).
@@ -12,7 +12,7 @@ Kalau muncul peringatan "PY-Sys tidak dapat dibuka" / "pengembang tidak dikenal"
 Atau lewat Terminal (sekali saja):
    xattr -dr com.apple.quarantine /Applications/PY-Sys.app
 
-Syarat: Mac Apple Silicon (M1/M2/M3/M4…) atau Intel, dengan macOS 13 Ventura atau lebih baru.
+Syarat: Mac (RAM berapa pun) Apple Silicon (M1/M2/M3/M4…) atau Intel, dengan macOS 13 Ventura atau lebih baru.
 Ikon PY-Sys muncul di menu bar (kanan atas), bukan di Dock.
 
 Baru di versi 1.1 — Klik Kanan+ (Utility)
