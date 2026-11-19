@@ -398,6 +398,7 @@ final class AetherCore: ObservableObject {
                                 frozen: old.frozen + r.frozen, skipped: r.skipped)
         }
         freeReport = rep
+        ToastTimer.shared.reset(for: rep.date)
         freeUpMessage = r.frozen.isEmpty
             ? tr("Tidak ada app idle yang aman dibekukan.", "No idle apps are safe to freeze.")
             : tr("\(rep.frozen.count) app dibekukan, ±\(Fmt.bytes(rep.frozenBytes)).", "\(rep.frozen.count) apps frozen, about \(Fmt.bytes(rep.frozenBytes)).")
@@ -409,6 +410,7 @@ final class AetherCore: ObservableObject {
             self.freeReport?.afterPct = after.usedFraction * 100
             self.freeReport?.afterPressure = after.pressure
             self.freeMeasuring = false
+            ToastTimer.shared.start(for: stamp)
         }
     }
 

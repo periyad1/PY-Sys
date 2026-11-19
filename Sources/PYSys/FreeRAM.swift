@@ -5,18 +5,60 @@ import AppKit
 
 enum FreeRAMRoute { static let tab = "freeram" }
 
-/// Kotak hasil di bawah tombol Bebaskan RAM (Beranda).
+/// Hitung mundur kotak hasil: hilang 20 detik setelah angka "sesudah" muncul; berhenti saat kursor di atasnya.
+final class ToastTimer: ObservableObject {
+    static let shared = ToastTimer()
+    @Published private(set) var progress: Double = 1       // 1 → 0
+    @Published private(set) var dismissed: Date?
+    var hovering = false
+    private var timer: Timer?
+    private var stamp: Date?
+    private let duration = 20.0
+
+    /// Laporan baru: tampilkan penuh, belum menghitung mundur.
+    func reset(for date: Date) {
+        timer?.invalidate()
+        timer = nil
+        stamp = date
+        progress = 1
+        dismissed = nil
+    }
+
+    /// Angka "sesudah" sudah ada: mulai hitung mundur.
+    func start(for date: Date) {
+        guard stamp == date else { return }
+        timer?.invalidate()
+        let t = Timer(timeInterval: 0.1, repeats: true) { [weak self] _ in self?.tick() }
+        RunLoop.main.add(t, forMode: .common)
+        timer = t
+    }
+
+    private func tick() {
+        guard !hovering else { return }
+        progress = max(0, progress - 0.1 / duration)
+        if progress <= 0 { dismiss() }
+    }
+
+    func dismiss() {
+        timer?.invalidate()
+        timer = nil
+        dismissed = stamp
+    }
+}
+
+/// Kotak hasil di bawah tombol Bebaskan RAM (Beranda), dengan tombol × dan hilang otomatis.
 struct FreeRAMToast: View {
     @ObservedObject var core: AetherCore
     @ObservedObject private var ui = UIState.shared
+    @ObservedObject private var timer = ToastTimer.shared
 
     var body: some View {
-        if let r = core.freeReport, Date().timeIntervalSince(r.date) < 600 {
+        if let r = core.freeReport, timer.dismissed != r.date {
             let ok = !r.frozen.isEmpty
-            Button { ui.tab = FreeRAMRoute.tab } label: {
+            let tint = ok ? Color.green : Color.orange
+            HStack(spacing: 8) {
                 HStack(spacing: 8) {
-                    Image(systemName: ok ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
-                        .foregroundStyle(ok ? Color.green : Color.orange)
+                    Image(systemName: ok ? "checkmark.circle.fill" : "exclamationmark.circle.fill").foregroundStyle(tint)
                     VStack(alignment: .leading, spacing: 1) {
                         Text(ok ? tr("\(r.frozen.count) app dibekukan, ±\(Fmt.bytes(r.frozenBytes))", "\(r.frozen.count) apps frozen, about \(Fmt.bytes(r.frozenBytes))")
                                 : tr("Tidak ada app idle yang aman dibekukan", "No idle apps are safe to freeze"))
@@ -26,12 +68,33 @@ struct FreeRAMToast: View {
                     Spacer()
                     Text(tr("Rincian ›", "Details ›")).font(.caption.bold()).foregroundStyle(Theme.accent)
                 }
-                .padding(9)
-                .background(RoundedRectangle(cornerRadius: 10).fill((ok ? Color.green : Color.orange).opacity(0.12)))
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke((ok ? Color.green : Color.orange).opacity(0.35)))
                 .contentShape(Rectangle())
+                .onTapGesture { ui.tab = FreeRAMRoute.tab }
+
+                Button { timer.dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 9, weight: .bold))
+                        .frame(width: 20, height: 20)
+                        .background(Circle().fill(Color.primary.opacity(0.08)))
+                }
+                .buttonStyle(.plain)
+                .help(tr("Tutup", "Close"))
             }
-            .buttonStyle(.plain)
+            .padding(9)
+            .background(RoundedRectangle(cornerRadius: 10).fill(tint.opacity(0.12)))
+            .overlay(alignment: .bottomLeading) {
+                if r.afterPct != nil {
+                    GeometryReader { g in
+                        Capsule().fill(tint.opacity(0.7)).frame(width: g.size.width * timer.progress, height: 3)
+                            .frame(maxHeight: .infinity, alignment: .bottom)
+                    }
+                    .padding(.horizontal, 6)
+                    .allowsHitTesting(false)
+                }
+            }
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(tint.opacity(0.35)))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .onHover { timer.hovering = $0 }
         }
     }
 

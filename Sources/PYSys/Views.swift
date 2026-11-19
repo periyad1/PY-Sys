@@ -639,6 +639,7 @@ final class UIState: ObservableObject {
     @Published var tabSel: Set<String> = []
     @Published var appSearch = ""
     @Published var customColorOpen = false
+    @Published var freeToastClosed: Date?
 }
 
 // MARK: - Shortcut aplikasi sistem
