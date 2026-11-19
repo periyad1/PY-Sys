@@ -42,6 +42,7 @@ struct RootView: View {
                 Spacer()
                 PressureBadge(level: core.mem.pressure)
             }
+            UpdateBanner()
             let cats = TabCategory.allCases.filter { c in tabs.contains { $0.category == c } }
             let catTabs = tabs.filter { $0.category == current.category }
             Picker("", selection: Binding(
@@ -657,33 +658,6 @@ struct DonateQRView: View {
     }
 }
 
-
-struct UpdateSection: View {
-    @ObservedObject private var up = Updater.shared
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(tr("Pembaruan", "Updates")).font(.subheadline.bold())
-            HStack {
-                TextField(tr("Repo GitHub (pemilik/nama)", "GitHub repo (owner/name)"), text: $up.repo)
-                    .textFieldStyle(.roundedBorder)
-                Button(up.checking ? "…" : tr("Cek sekarang", "Check now")) { up.check() }
-                    .controlSize(.small)
-                    .disabled(up.checking || up.repo.isEmpty)
-            }
-            Toggle(tr("Periksa otomatis sekali sehari", "Check automatically once a day"), isOn: $up.autoCheck).font(.caption)
-            if let s = up.status {
-                Text(s).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-            }
-            if let u = up.downloadURL {
-                Button(tr("Unduh versi baru", "Download the new version")) { NSWorkspace.shared.open(u) }.controlSize(.small)
-            }
-            Text(tr("PY-Sys membaca rilis terbaru dari GitHub Releases repo ini. Kosongkan bila tidak dipakai.",
-                    "PY-Sys reads the latest release from this repo's GitHub Releases. Leave empty if unused."))
-                .font(.caption2).foregroundStyle(.secondary)
-        }
-    }
-}
 
 
 /// Memberi tahu AetherCore kapan panel menu bar benar-benar terlihat (mode hemat saat tertutup).

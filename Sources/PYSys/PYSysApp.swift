@@ -43,6 +43,7 @@ struct MenuBarLabel: View {
     @ObservedObject var core: AetherCore
     @ObservedObject private var settings = AetherCore.shared.settings
     @ObservedObject private var agents = AgentMonitor.shared
+    @ObservedObject private var updater = Updater.shared
 
     private var text: String {
         var parts: [String] = []
@@ -65,6 +66,7 @@ struct MenuBarLabel: View {
             Image(systemName: core.mem.pressure.symbol)
             let t = text
             if !t.isEmpty { Text(t).monospacedDigit() }
+            if updater.available { Image(systemName: "arrow.down.circle.fill") }
         }
     }
 }

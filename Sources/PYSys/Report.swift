@@ -140,78 +140,6 @@ enum SystemReport {
     }
 }
 
-// MARK: - Cek pembaruan (GitHub Releases)
-
-final class Updater: ObservableObject {
-    static let shared = Updater()
-    @Published var repo: String { didSet { UserDefaults.standard.set(repo, forKey: "updateRepo") } }
-    @Published var autoCheck: Bool { didSet { UserDefaults.standard.set(autoCheck, forKey: "updateAuto") } }
-    @Published private(set) var status: String?
-    @Published private(set) var downloadURL: URL?
-    @Published private(set) var checking = false
-
-    init() {
-        repo = UserDefaults.standard.string(forKey: "updateRepo") ?? ""
-        autoCheck = UserDefaults.standard.object(forKey: "updateAuto") as? Bool ?? true
-    }
-
-    /// "1.10" > "1.9"
-    static func newer(_ a: String, than b: String) -> Bool {
-        let x = a.split(separator: ".").map { Int($0.filter(\.isNumber)) ?? 0 }
-        let y = b.split(separator: ".").map { Int($0.filter(\.isNumber)) ?? 0 }
-        for i in 0..<max(x.count, y.count) {
-            let p = i < x.count ? x[i] : 0, q = i < y.count ? y[i] : 0
-            if p != q { return p > q }
-        }
-        return false
-    }
-
-    func startAuto() {
-        guard autoCheck, !repo.isEmpty else { return }
-        let last = UserDefaults.standard.object(forKey: "updateLast") as? Date ?? .distantPast
-        if Date().timeIntervalSince(last) > 86_400 { check(silent: true) }
-    }
-
-    func check(silent: Bool = false) {
-        let r = repo.trimmingCharacters(in: .whitespaces)
-            .replacingOccurrences(of: "https://github.com/", with: "")
-            .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        guard r.split(separator: "/").count == 2, let url = URL(string: "https://api.github.com/repos/\(r)/releases/latest") else {
-            status = tr("Isi repo GitHub dengan format pemilik/nama, mis. periyadi/PY-Sys.", "Enter the GitHub repo as owner/name, e.g. periyadi/PY-Sys.")
-            return
-        }
-        checking = true
-        var req = URLRequest(url: url)
-        req.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
-        URLSession.shared.dataTask(with: req) { data, _, err in
-            var msg: String
-            var dl: URL?
-            let current = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
-            if let data, let j = try? JSONSerialization.jsonObject(with: data) as? [String: Any], let tag = j["tag_name"] as? String {
-                let v = tag.trimmingCharacters(in: CharacterSet(charactersIn: "vV"))
-                if Self.newer(v, than: current) {
-                    let assets = j["assets"] as? [[String: Any]] ?? []
-                    let dmg = assets.first { ($0["name"] as? String)?.hasSuffix(".dmg") == true }?["browser_download_url"] as? String
-                    dl = URL(string: dmg ?? (j["html_url"] as? String ?? ""))
-                    msg = tr("Versi \(v) tersedia (Anda memakai \(current)).", "Version \(v) is available (you have \(current)).")
-                    if silent { Notifier.post(title: "PY-Sys \(v)", body: tr("Versi baru tersedia. Buka Pengaturan untuk mengunduh.", "A new version is available. Open Settings to download.")) }
-                } else {
-                    msg = tr("PY-Sys sudah versi terbaru (\(current)).", "PY-Sys is up to date (\(current)).")
-                }
-                UserDefaults.standard.set(Date(), forKey: "updateLast")
-            } else {
-                msg = tr("Gagal memeriksa: \(err?.localizedDescription ?? "repo atau rilis tidak ditemukan").",
-                         "Check failed: \(err?.localizedDescription ?? "repo or release not found").")
-            }
-            DispatchQueue.main.async {
-                self.checking = false
-                self.status = msg
-                self.downloadURL = dl
-            }
-        }.resume()
-    }
-}
-
 // MARK: - Jendela "Tentang & fitur"
 
 enum FeatureCatalog {
@@ -270,6 +198,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.5.2", "Pembaruan otomatis: tanda di menu bar, banner di panel, dan pasang versi baru dengan satu klik.",
+                "Automatic updates: a menu bar badge, a banner in the panel, and one-click install of new versions."),
         Change("1.5.1", "Mode hemat: pembaruan data lebih jarang saat panel tertutup, sensor suhu dan GPU dibaca seperlunya.",
                 "Power saving: slower updates while the panel is closed, temperature and GPU read only when needed."),
         Change("1.5", "Uninstaller, file besar & duplikat, laporan PDF, cek pembaruan, jendela Tentang & fitur.",

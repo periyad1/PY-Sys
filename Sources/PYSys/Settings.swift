@@ -239,7 +239,7 @@ enum TabCategory: String, CaseIterable {
 
 enum AppInfo {
     static let name = "PY-Sys"
-    static let version = "1.5.1 (2026)"
+    static let version = "1.5.2 (2026)"
     static let author = "Periyadi"
     static let email = "periyadi@telkomuniversity.ac.id"
 }
