@@ -203,8 +203,10 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
-        Change("1.6", "Tampilan baru: Beranda dengan ringkasan, pencarian fitur, favorit, dan semua fitur berlabel.",
-                "New layout: a Home screen with a summary, feature search, favorites and labelled features."),
+        Change("1.6.1", "Keamanan: pembaruan otomatis hanya menerima rilis bertanda tangan pembuat yang sama; skrip pengaman GitHub dan cadangan sertifikat.",
+                "Security: automatic updates only accept releases signed by the same publisher; GitHub hardening and certificate backup scripts."),
+        Change("1.6", "Logo oranye baru dan tema PY-Sys; tampilan Beranda dengan ringkasan, pencarian fitur, favorit, dan semua fitur berlabel.",
+                "New orange logo and PY-Sys theme; a Home screen with a summary, feature search, favorites and labelled features."),
         Change("1.5.3", "Deskripsi berlaku untuk semua ukuran RAM; uji pertama pembaruan otomatis.",
                 "Description now covers every RAM size; first test of automatic updates."),
         Change("1.5.2", "Pembaruan otomatis: tanda di menu bar, banner di panel, dan pasang versi baru dengan satu klik.",
@@ -229,9 +231,9 @@ struct AboutView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 12) {
-                    Image(systemName: "memorychip").font(.system(size: 34)).foregroundStyle(Theme.accent)
+                    Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 56, height: 56)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("PY-Sys").font(.title.bold())
+                        Text("PY-Sys").font(.system(.title, design: .rounded).weight(.heavy)).foregroundStyle(Theme.accent)
                         Text(tr("Versi \(AppInfo.version) · oleh \(AppInfo.author)", "Version \(AppInfo.version) · by \(AppInfo.author)"))
                             .foregroundStyle(.secondary)
                     }

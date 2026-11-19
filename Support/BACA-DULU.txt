@@ -1,4 +1,4 @@
-PY-Sys 1.6 — cara memasang
+PY-Sys 1.6.1 — cara memasang
 ======================
 
 1. Seret PY-Sys ke folder Applications (di jendela ini).
@@ -49,5 +49,9 @@ Baru di versi 1.5
    • Pengaturan › Pembaruan (GitHub Releases) dan tombol "Deskripsi program & fitur versi terbaru".
 
 Baru di versi 1.6
+   • Logo oranye baru (ikon aplikasi & menu bar) dan tema oranye bawaan.
    • Tampilan Beranda: ringkasan RAM/swap/CPU/suhu, kotak cari fitur, favorit, dan semua fitur berlabel.
      Buka fitur dengan klik kotaknya; kembali dengan "‹ Beranda" (atau ⌘[ ).
+
+Baru di versi 1.6.1
+   • Pembaruan otomatis hanya memasang versi yang ditandatangani pembuat resmi PY-Sys; rilis palsu ditolak.

@@ -63,7 +63,7 @@ struct MenuBarLabel: View {
 
     var body: some View {
         HStack(spacing: 3) {
-            Image(systemName: core.mem.pressure.symbol)
+            if core.mem.pressure == .normal { Image(nsImage: Brand.menuGlyph) } else { Image(systemName: core.mem.pressure.symbol) }
             let t = text
             if !t.isEmpty { Text(t).monospacedDigit() }
             if updater.available { Image(systemName: "arrow.down.circle.fill") }

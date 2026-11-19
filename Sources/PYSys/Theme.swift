@@ -202,12 +202,15 @@ struct ThemeSettingsSection: View {
                     .font(.caption2).foregroundStyle(.secondary)
             }
 
-            Button(tr("Reset tema", "Reset theme")) {
+            Button(tr("Kembali ke tema PY-Sys (oranye)", "Back to the PY-Sys theme (orange)")) {
                 settings.themeMode = "system"
                 Theme.applyAppearance("system")
-                settings.accentCustom = false
-                settings.bgKind = "none"
-                settings.bgOpacity = 0.35
+                settings.accentCustom = true
+                settings.accentHue = Brand.accentHue
+                settings.bgKind = "color"
+                settings.bgHue = Brand.bgHue
+                settings.bgBrightness = Brand.bgBrightness
+                settings.bgOpacity = Brand.bgOpacity
                 settings.bgBlur = 8
             }
             .controlSize(.small)

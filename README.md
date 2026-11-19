@@ -1,3 +1,5 @@
+<p align="center"><img src="Support/logo.png" width="128" alt="Logo PY-Sys"></p>
+
 # PY-Sys — pemantau, pembersih & utilitas Mac di menu bar
 
 PY-Sys adalah aplikasi menu bar untuk **semua Mac dengan RAM berapa pun** (8, 16, 24 GB atau lebih), Apple Silicon maupun Intel, macOS 13 Ventura atau lebih baru. Manfaatnya paling terasa di Mac 8 GB yang dipakai untuk banyak tab browser, beberapa monitor, dan agen AI, tetapi Mac dengan RAM besar juga terbantu untuk tetap rapi, terpantau, dan produktif.

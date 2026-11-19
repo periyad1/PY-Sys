@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 import ServiceManagement
 
 final class Settings: ObservableObject {
@@ -62,8 +63,8 @@ final class Settings: ObservableObject {
         d.register(defaults: [K.cryo: true, K.idle: 10, K.cpu: 1.0, K.bloat: 2.5,
                               K.wl: Settings.defaultWhitelist, K.lang: AppLanguage.id.rawValue, K.hidden: [String](), K.pubIP: true,
                               K.sEn: false, K.sTp: true, K.sMo: false, K.sStepOn: true, K.sStep: 3, K.sHor: true,
-                              K.thMode: "system", K.thAcc: false, K.thHue: 210.0, K.bgKind: "none", K.bgHue: 210.0,
-                              K.bgBright: 0.5, K.bgOpa: 0.35, K.bgBlur: 8.0, K.bgImg: "",
+                              K.thMode: "system", K.thAcc: true, K.thHue: Brand.accentHue, K.bgKind: "color", K.bgHue: Brand.bgHue,
+                              K.bgBright: Brand.bgBrightness, K.bgOpa: Brand.bgOpacity, K.bgBlur: 8.0, K.bgImg: "",
                               K.agCPU: 90.0, K.agMin: 5, K.bar: ["ram"], K.restart: true,
                               K.fav: ["ram", "cryo", "agents", "clipboard", "focus"]])
         cryoEnabled = d.bool(forKey: K.cryo)
@@ -309,9 +310,42 @@ enum TabCategory: String, CaseIterable {
     }
 }
 
+/// Warna identitas PY-Sys (logo oranye).
+enum Brand {
+    static let accentHue = 24.0       // oranye logo
+    static let bgHue = 28.0
+    static let bgBrightness = 0.95
+    static let bgOpacity = 0.10       // semburat hangat tipis di latar panel
+
+    /// Ikon menu bar: chip dengan titik di tengah, sama dengan logo. Template = otomatis hitam/putih.
+    static let menuGlyph: NSImage = {
+        let img = NSImage(size: NSSize(width: 18, height: 18), flipped: false) { _ in
+            NSColor.black.setStroke()
+            NSColor.black.setFill()
+            let body = NSBezierPath(roundedRect: NSRect(x: 4.5, y: 4.5, width: 9, height: 9), xRadius: 1.8, yRadius: 1.8)
+            body.lineWidth = 1.5
+            body.stroke()
+            let pins = NSBezierPath()
+            pins.lineWidth = 1.3
+            pins.lineCapStyle = .round
+            for o in [7.0, 11.0] {
+                pins.move(to: NSPoint(x: o, y: 4.5)); pins.line(to: NSPoint(x: o, y: 2.2))
+                pins.move(to: NSPoint(x: o, y: 13.5)); pins.line(to: NSPoint(x: o, y: 15.8))
+                pins.move(to: NSPoint(x: 4.5, y: o)); pins.line(to: NSPoint(x: 2.2, y: o))
+                pins.move(to: NSPoint(x: 13.5, y: o)); pins.line(to: NSPoint(x: 15.8, y: o))
+            }
+            pins.stroke()
+            NSBezierPath(ovalIn: NSRect(x: 7.4, y: 7.4, width: 3.2, height: 3.2)).fill()
+            return true
+        }
+        img.isTemplate = true
+        return img
+    }()
+}
+
 enum AppInfo {
     static let name = "PY-Sys"
-    static let version = "1.6 (2026)"
+    static let version = "1.6.1 (2026)"
     static let author = "Periyadi"
     static let email = "periyadi@telkomuniversity.ac.id"
 }

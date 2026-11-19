@@ -97,7 +97,7 @@ struct HomeView: View {
 struct SectionTitle: View {
     let text: String
     var body: some View {
-        Text(text.uppercased()).font(.caption.bold()).foregroundStyle(.secondary).tracking(0.5)
+        Text(text.uppercased()).font(.system(.caption, design: .rounded).weight(.heavy)).foregroundStyle(Theme.accent.opacity(0.85)).tracking(0.6)
     }
 }
 
@@ -131,7 +131,7 @@ struct TileGrid: View {
                             }
                         }
                         Text(t.short)
-                            .font(.system(size: 10.5, weight: .medium))
+                            .font(.system(size: 10.5, weight: .semibold, design: .rounded))
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
                     }
@@ -157,7 +157,7 @@ struct SummaryCard: View {
         Button { ui.tab = tab.rawValue } label: {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title).font(.caption2).foregroundStyle(.secondary)
-                Text(value).font(.system(size: 14, weight: .bold).monospacedDigit()).lineLimit(1).minimumScaleFactor(0.8)
+                Text(value).font(.system(size: 14, weight: .heavy, design: .rounded).monospacedDigit()).lineLimit(1).minimumScaleFactor(0.8)
                 GeometryReader { g in
                     ZStack(alignment: .leading) {
                         Capsule().fill(Color.primary.opacity(0.1))

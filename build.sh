@@ -39,12 +39,13 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp build/PYSys-universal "$APP/Contents/MacOS/PYSys"
 cp Support/Info.plist "$APP/Contents/Info.plist"
 cp Support/donate-qr.png "$APP/Contents/Resources/donate-qr.png"
+cp Support/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 cp -R Support/Templates "$APP/Contents/Resources/Templates"
 
 if [[ -n "${DEV_ID:-}" ]]; then
     echo "▶ Codesign dengan Developer ID…"
     codesign --force --deep --options runtime --timestamp --sign "$DEV_ID" "$APP"
-elif security find-identity -v -p codesigning 2>/dev/null | grep -q '"PY-Sys Local"'; then
+elif security find-identity -v -p codesigning 2>/dev/null | grep '"PY-Sys Local"' >/dev/null; then
     # Sertifikat lokal tetap → izin Accessibility/Automation tidak hilang setiap build ulang
     echo "▶ Codesign dengan sertifikat lokal \"PY-Sys Local\"…"
     codesign --force --deep --sign "PY-Sys Local" --identifier id.pysys.app "$APP"

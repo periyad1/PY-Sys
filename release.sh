@@ -23,6 +23,14 @@ echo "▶ Build PY-Sys ${VERSION}…"
 ./build.sh --dmg
 [[ -f "$DMG" ]] || { echo "✖ ${DMG} tidak ditemukan"; exit 1; }
 
+# Rilis wajib bertanda tangan "PY-Sys Local": PY-Sys di Mac pengguna menolak pembaruan dengan tanda tangan lain.
+SIG="$(codesign -dvv build/PY-Sys.app 2>&1 || true)"
+if [[ "${SIG}" != *"Authority=PY-Sys Local"* ]]; then
+    echo "✖ build/PY-Sys.app tidak ditandatangani sertifikat \"PY-Sys Local\"."
+    echo "  Jalankan ./make-cert.sh (atau impor cadangan sertifikat), lalu ulangi ./release.sh."
+    exit 1
+fi
+
 if [[ ! -d .git ]]; then
     echo "▶ Membuat repo GitHub PY-Sys (public)…"
     git init -q

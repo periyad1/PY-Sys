@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import Security
 
 // MARK: - Pembaruan otomatis dari GitHub Releases
 
@@ -150,6 +151,41 @@ final class Updater: ObservableObject {
         return (p.terminationStatus, out)
     }
 
+    // MARK: Verifikasi tanda tangan
+
+    /// Persyaratan tanda tangan aplikasi yang sedang berjalan ("cap" pembuatnya).
+    private static func requirement(of url: URL) -> (req: SecRequirement, text: String)? {
+        var code: SecStaticCode?
+        guard SecStaticCodeCreateWithPath(url as CFURL, [], &code) == errSecSuccess, let code else { return nil }
+        var req: SecRequirement?
+        guard SecCodeCopyDesignatedRequirement(code, [], &req) == errSecSuccess, let req else { return nil }
+        var text: CFString?
+        SecRequirementCopyString(req, [], &text)
+        return (req, (text as String?) ?? "")
+    }
+
+    /// Versi baru hanya diterima bila ditandatangani sertifikat yang sama dengan versi yang terpasang.
+    /// nil = lolos; selain itu berisi alasan penolakan.
+    static func verifySameSigner(_ newApp: URL) -> String? {
+        guard let mine = requirement(of: Bundle.main.bundleURL) else {
+            return tr("Tanda tangan PY-Sys yang terpasang tidak terbaca.", "The installed PY-Sys signature can't be read.")
+        }
+        // Build ad-hoc (tanpa sertifikat) tidak punya "cap" tetap: tidak bisa dibandingkan.
+        guard mine.text.contains("certificate") else {
+            return tr("PY-Sys ini dibuild tanpa sertifikat, jadi pembaruan tidak bisa diverifikasi. Pasang manual dari DMG.",
+                      "This PY-Sys was built without a certificate, so updates can't be verified. Install manually from the DMG.")
+        }
+        var code: SecStaticCode?
+        guard SecStaticCodeCreateWithPath(newApp as CFURL, [], &code) == errSecSuccess, let code else {
+            return tr("Versi baru tidak bertanda tangan.", "The new version isn't signed.")
+        }
+        let flags = SecCSFlags(rawValue: UInt32(kSecCSCheckAllArchitectures) | UInt32(kSecCSCheckNestedCode) | UInt32(kSecCSStrictValidate))
+        let rc = SecStaticCodeCheckValidity(code, flags, mine.req)
+        return rc == errSecSuccess ? nil
+            : tr("DITOLAK: versi baru tidak ditandatangani oleh pembuat PY-Sys yang sama (kode \(rc)). Bisa jadi rilis palsu; jangan dipasang.",
+                 "REJECTED: the new version isn't signed by the same PY-Sys publisher (code \(rc)). It may be a fake release; don't install it.")
+    }
+
     func install() {
         guard !installing else { return }
         guard let dmg = dmgURL else {
@@ -197,9 +233,17 @@ final class Updater: ObservableObject {
 
             // Periksa: aplikasi utuh, bundle ID sama, versinya memang lebih baru
             guard found != nil, let b = Bundle(url: newApp), b.bundleIdentifier == Bundle.main.bundleIdentifier,
-                  let nv = b.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String, Self.newer(nv, than: Self.current),
-                  Self.run("/usr/bin/codesign", ["--verify", "--deep", newApp.path]).0 == 0 else {
+                  let nv = b.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String, Self.newer(nv, than: Self.current) else {
                 DispatchQueue.main.async { self.fail(tr("Isi DMG tidak valid; pembaruan dibatalkan.", "The DMG contents aren't valid; update cancelled.")) }
+                return
+            }
+            if let why = Self.verifySameSigner(newApp) {
+                try? fm.removeItem(at: newApp)
+                try? fm.removeItem(at: dmgFile)
+                DispatchQueue.main.async {
+                    self.fail(why)
+                    Notifier.post(title: tr("Pembaruan PY-Sys ditolak", "PY-Sys update rejected"), body: why)
+                }
                 return
             }
             Self.run("/usr/bin/xattr", ["-dr", "com.apple.quarantine", newApp.path])
@@ -295,8 +339,8 @@ struct UpdateSection: View {
             if up.available && !up.installing {
                 Button(tr("Perbarui ke \(up.latest ?? "")", "Update to \(up.latest ?? "")")) { up.install() }.controlSize(.small)
             }
-            Text(tr("Versi \(Updater.current). PY-Sys membaca rilis terbaru dari GitHub Releases repo ini (harus public). Pembaruan mengunduh DMG, mengganti aplikasi, lalu membuka ulang PY-Sys.",
-                    "Version \(Updater.current). PY-Sys reads the latest release from this repo's GitHub Releases (must be public). Updating downloads the DMG, replaces the app and reopens PY-Sys."))
+            Text(tr("Versi \(Updater.current). PY-Sys membaca rilis terbaru dari GitHub Releases repo ini (harus public). Pembaruan hanya dipasang bila ditandatangani pembuat yang sama dengan versi ini.",
+                    "Version \(Updater.current). PY-Sys reads the latest release from this repo's GitHub Releases (must be public). Updates are installed only if signed by the same publisher as this version."))
                 .font(.caption2).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }
     }

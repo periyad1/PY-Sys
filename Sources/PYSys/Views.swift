@@ -38,8 +38,9 @@ struct RootView: View {
         VStack(alignment: .leading, spacing: 10) {
             let current = AppTab(rawValue: ui.tab)
             HStack(spacing: 6) {
-                Text("PY-Sys").font(.headline)
-                Text("· " + (current?.title ?? tr("Beranda", "Home"))).font(.headline).foregroundStyle(.secondary)
+                Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 20, height: 20)
+                Text("PY-Sys").font(.system(.headline, design: .rounded).weight(.heavy)).foregroundStyle(Theme.accent)
+                Text("· " + (current?.title ?? tr("Beranda", "Home"))).font(.system(.headline, design: .rounded)).foregroundStyle(.secondary)
                 Spacer()
                 PressureBadge(level: core.mem.pressure)
             }
