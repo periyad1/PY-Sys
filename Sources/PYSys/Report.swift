@@ -156,6 +156,11 @@ enum FeatureCatalog {
         let items: [Item]
     }
 
+    /// Versi terbaru yang menambah fitur (diberi label BARU di jendela Tentang).
+    static var newestFeature: String {
+        sections.flatMap { $0.items.map(\.since) }.max { Updater.newer($1, than: $0) } ?? ""
+    }
+
     static var sections: [Section] {
         [
             Section(title: "Monitoring", items: [
@@ -198,6 +203,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.6", "Tampilan baru: Beranda dengan ringkasan, pencarian fitur, favorit, dan semua fitur berlabel.",
+                "New layout: a Home screen with a summary, feature search, favorites and labelled features."),
         Change("1.5.3", "Deskripsi berlaku untuk semua ukuran RAM; uji pertama pembaruan otomatis.",
                 "Description now covers every RAM size; first test of automatic updates."),
         Change("1.5.2", "Pembaruan otomatis: tanda di menu bar, banner di panel, dan pasang versi baru dengan satu klik.",
@@ -241,7 +248,7 @@ struct AboutView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 HStack(spacing: 6) {
                                     Text(i.title).font(.callout.bold())
-                                    if i.since == "1.5" {
+                                    if i.since == FeatureCatalog.newestFeature {
                                         Text(tr("BARU", "NEW")).font(.caption2.bold()).padding(.horizontal, 5).padding(.vertical, 1)
                                             .background(Capsule().fill(Color.orange.opacity(0.25)))
                                     } else {

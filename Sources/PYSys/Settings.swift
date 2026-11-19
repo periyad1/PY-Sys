@@ -9,7 +9,7 @@ final class Settings: ObservableObject {
         static let sEn = "scrollEnabled", sTp = "scrollTrackpadNatural", sMo = "scrollMouseNatural"
         static let sStepOn = "scrollStepEnabled", sStep = "scrollStep", sHor = "scrollHorizontal"
         static let thMode = "themeMode", thAcc = "accentCustom", thHue = "accentHue", bgKind = "bgKind", bgHue = "bgHue"
-        static let restart = "restartReminder", agCPU = "agentCPU", agMin = "agentMinutes", bar = "barItems"
+        static let fav = "favorites", restart = "restartReminder", agCPU = "agentCPU", agMin = "agentMinutes", bar = "barItems"
         static let bgBright = "bgBrightness", bgOpa = "bgOpacity", bgBlur = "bgBlur", bgImg = "bgImageName"
     }
 
@@ -50,6 +50,7 @@ final class Settings: ObservableObject {
     @Published var bgOpacity: Double { didSet { UserDefaults.standard.set(bgOpacity, forKey: K.bgOpa) } }
     @Published var bgBlur: Double { didSet { UserDefaults.standard.set(bgBlur, forKey: K.bgBlur) } }
     @Published var bgImageName: String { didSet { UserDefaults.standard.set(bgImageName, forKey: K.bgImg) } }
+    @Published var favorites: [String] { didSet { UserDefaults.standard.set(favorites, forKey: K.fav) } }
     @Published var restartReminder: Bool { didSet { UserDefaults.standard.set(restartReminder, forKey: K.restart) } }
     @Published var agentCPU: Double { didSet { UserDefaults.standard.set(agentCPU, forKey: K.agCPU) } }
     @Published var agentMinutes: Int { didSet { UserDefaults.standard.set(agentMinutes, forKey: K.agMin) } }
@@ -63,7 +64,8 @@ final class Settings: ObservableObject {
                               K.sEn: false, K.sTp: true, K.sMo: false, K.sStepOn: true, K.sStep: 3, K.sHor: true,
                               K.thMode: "system", K.thAcc: false, K.thHue: 210.0, K.bgKind: "none", K.bgHue: 210.0,
                               K.bgBright: 0.5, K.bgOpa: 0.35, K.bgBlur: 8.0, K.bgImg: "",
-                              K.agCPU: 90.0, K.agMin: 5, K.bar: ["ram"], K.restart: true])
+                              K.agCPU: 90.0, K.agMin: 5, K.bar: ["ram"], K.restart: true,
+                              K.fav: ["ram", "cryo", "agents", "clipboard", "focus"]])
         cryoEnabled = d.bool(forKey: K.cryo)
         idleMinutes = max(2, d.integer(forKey: K.idle))
         cpuGuard = d.double(forKey: K.cpu)
@@ -90,6 +92,7 @@ final class Settings: ObservableObject {
         showPublicIP = d.bool(forKey: K.pubIP)
         agentCPU = d.double(forKey: K.agCPU)
         restartReminder = d.bool(forKey: K.restart)
+        favorites = d.stringArray(forKey: K.fav) ?? []
         agentMinutes = max(1, d.integer(forKey: K.agMin))
         barItems = d.stringArray(forKey: K.bar) ?? ["ram"]
     }
@@ -225,6 +228,75 @@ enum AppTab: String, CaseIterable {
     }
 }
 
+extension Settings {
+    func toggleFavorite(_ t: AppTab) {
+        if favorites.contains(t.rawValue) { favorites.removeAll { $0 == t.rawValue } }
+        else if favorites.count < 10 { favorites.append(t.rawValue) }
+    }
+}
+
+extension AppTab {
+    /// Nama pendek untuk kotak fitur di Beranda.
+    var short: String {
+        switch self {
+        case .dashboard: return "Dashboard"
+        case .overview: return tr("Ringkasan", "Overview")
+        case .ram: return "RAM"
+        case .cpu: return "CPU"
+        case .network: return tr("Jaringan", "Network")
+        case .sensors: return tr("Sensor", "Sensors")
+        case .agents: return tr("Agen AI", "AI Agents")
+        case .browser: return "Browser"
+        case .history: return tr("Riwayat", "History")
+        case .apps: return tr("Aplikasi", "Apps")
+        case .cryo: return "Cryo-Sleep"
+        case .focus: return tr("Fokus", "Focus")
+        case .tabsleep: return tr("Tab", "Tabs")
+        case .storage: return tr("Penyimpanan", "Storage")
+        case .uninstall: return "Uninstall"
+        case .files: return tr("File besar", "Large files")
+        case .toggles: return "Toggle"
+        case .clickmenu: return tr("Klik Kanan+", "Right-Click+")
+        case .windows: return tr("Jendela", "Windows")
+        case .clipboard: return "Clipboard"
+        case .displays: return tr("Monitor", "Displays")
+        case .scheduler: return tr("Jadwal", "Schedule")
+        case .scroll: return "Scroll"
+        case .tools: return tr("Alat", "Tools")
+        case .settings: return tr("Pengaturan", "Settings")
+        }
+    }
+
+    /// Kata kunci tambahan untuk pencarian di Beranda.
+    var keywords: String {
+        switch self {
+        case .ram: return "memori memory swap tekanan pressure"
+        case .cpu: return "gpu prosesor processor suhu temperature"
+        case .network: return "internet wifi ip"
+        case .sensors: return "suhu kipas fan baterai battery daya power"
+        case .agents: return "ai claude codex ollama python node"
+        case .history: return "grafik chart ssd restart"
+        case .apps: return "aplikasi bekukan freeze quit"
+        case .cryo: return "bekukan freeze sleep"
+        case .focus: return "fokus profil profile"
+        case .tabsleep: return "tab browser chrome safari tutup"
+        case .storage: return "cache sampah trash bersihkan clean"
+        case .uninstall: return "hapus aplikasi remove uninstall"
+        case .files: return "duplikat duplicate besar large"
+        case .toggles: return "dark mode dock kunci lock awake"
+        case .clickmenu: return "finder klik kanan right click"
+        case .windows: return "jendela snap monitor layout tata letak"
+        case .clipboard: return "salin copy paste tempel riwayat"
+        case .displays: return "kecerahan brightness ddc redup dim monitor"
+        case .scheduler: return "jadwal schedule tugas task otomatis"
+        case .scroll: return "scroll mouse trackpad"
+        case .tools: return "info sistem baterai pdf laporan report"
+        case .settings: return "bahasa language tema theme pembaruan update login"
+        default: return ""
+        }
+    }
+}
+
 enum TabCategory: String, CaseIterable {
     case monitoring, cleaner, utility
 
@@ -239,7 +311,7 @@ enum TabCategory: String, CaseIterable {
 
 enum AppInfo {
     static let name = "PY-Sys"
-    static let version = "1.5.3 (2026)"
+    static let version = "1.6 (2026)"
     static let author = "Periyadi"
     static let email = "periyadi@telkomuniversity.ac.id"
 }

@@ -32,70 +32,84 @@ struct RootView: View {
     @ObservedObject var settings: Settings
     @ObservedObject private var ui = UIState.shared
 
+    private var isHome: Bool { AppTab(rawValue: ui.tab) == nil }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            let tabs = AppTab.allCases.filter { $0 == .settings || !settings.hiddenTabs.contains($0.rawValue) }
-            let current = tabs.first { $0.rawValue == ui.tab } ?? tabs[0]
-            HStack {
+            let current = AppTab(rawValue: ui.tab)
+            HStack(spacing: 6) {
                 Text("PY-Sys").font(.headline)
-                Text("· " + current.title).font(.headline).foregroundStyle(.secondary)
+                Text("· " + (current?.title ?? tr("Beranda", "Home"))).font(.headline).foregroundStyle(.secondary)
                 Spacer()
                 PressureBadge(level: core.mem.pressure)
             }
             UpdateBanner()
-            let cats = TabCategory.allCases.filter { c in tabs.contains { $0.category == c } }
-            let catTabs = tabs.filter { $0.category == current.category }
-            Picker("", selection: Binding(
-                get: { current.category.rawValue },
-                set: { c in ui.tab = (tabs.first { $0.category.rawValue == c } ?? tabs[0]).rawValue })) {
-                ForEach(cats, id: \.self) { c in
-                    Text(c.title).tag(c.rawValue)
-                }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            Picker("", selection: Binding(get: { current.rawValue }, set: { ui.tab = $0 })) {
-                ForEach(catTabs, id: \.self) { t in
-                    Image(systemName: t.icon).help(t.title).tag(t.rawValue)
-                }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
 
-            ScrollView {
-                Group {
-                    switch current {
-                    case .dashboard: DashboardTab(core: core)
-                    case .overview: OverviewTab(core: core, freezer: freezer)
-                    case .ram: MemoryTab(core: core)
-                    case .cpu: CPUTab(core: core)
-                    case .network: NetworkTab(core: core, settings: settings)
-                    case .sensors: SensorsTab(core: core)
-                    case .agents: AgentsTab(settings: settings)
-                    case .browser: BrowserTab()
-                    case .history: HistoryTab(core: core)
-                    case .focus: FocusTab(core: core)
-                    case .tabsleep: TabSleepTab()
-                    case .uninstall: UninstallTab()
-                    case .files: FileFinderTab()
-                    case .apps: AppsTab(core: core, freezer: freezer)
-                    case .cryo: CryoTab(freezer: freezer, settings: settings)
-                    case .storage: StorageTab(core: core)
-                    case .toggles: TogglesTab(settings: settings)
-                    case .clickmenu: ClickMenuTab()
-                    case .windows: WindowTab()
-                    case .clipboard: ClipboardTab()
-                    case .displays: DisplaysTab()
-                    case .scheduler: SchedulerTab()
-                    case .scroll: ScrollTab(settings: settings)
-                    case .tools: ToolsTab(core: core)
-                    case .settings: SettingsTab(settings: settings)
+            if let t = current {
+                HStack {
+                    Button {
+                        ui.search = ""
+                        ui.tab = UIState.home
+                    } label: {
+                        HStack(spacing: 2) {
+                            Image(systemName: "chevron.left")
+                            Text(tr("Beranda", "Home"))
+                        }
+                        .font(.callout.weight(.semibold))
+                    }
+                    .buttonStyle(.borderless)
+                    .keyboardShortcut("[", modifiers: .command)
+                    Spacer()
+                    if t != .settings {
+                        let fav = settings.favorites.contains(t.rawValue)
+                        Button {
+                            settings.toggleFavorite(t)
+                        } label: {
+                            Label(tr("Favorit", "Favorite"), systemImage: fav ? "star.fill" : "star")
+                                .foregroundStyle(fav ? Color.orange : Color.secondary)
+                        }
+                        .buttonStyle(.borderless)
+                        .font(.caption)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.trailing, 4)
+                ScrollView {
+                    Group {
+                        switch t {
+                        case .dashboard: DashboardTab(core: core)
+                        case .overview: OverviewTab(core: core, freezer: freezer)
+                        case .ram: MemoryTab(core: core)
+                        case .cpu: CPUTab(core: core)
+                        case .network: NetworkTab(core: core, settings: settings)
+                        case .sensors: SensorsTab(core: core)
+                        case .agents: AgentsTab(settings: settings)
+                        case .browser: BrowserTab()
+                        case .history: HistoryTab(core: core)
+                        case .focus: FocusTab(core: core)
+                        case .tabsleep: TabSleepTab()
+                        case .uninstall: UninstallTab()
+                        case .files: FileFinderTab()
+                        case .apps: AppsTab(core: core, freezer: freezer)
+                        case .cryo: CryoTab(freezer: freezer, settings: settings)
+                        case .storage: StorageTab(core: core)
+                        case .toggles: TogglesTab(settings: settings)
+                        case .clickmenu: ClickMenuTab()
+                        case .windows: WindowTab()
+                        case .clipboard: ClipboardTab()
+                        case .displays: DisplaysTab()
+                        case .scheduler: SchedulerTab()
+                        case .scroll: ScrollTab(settings: settings)
+                        case .tools: ToolsTab(core: core)
+                        case .settings: SettingsTab(settings: settings)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.trailing, 4)
+                }
+                .frame(height: 470)
+            } else {
+                HomeView(core: core, settings: settings)
+                    .frame(height: 500)
             }
-            .frame(height: 450)
 
             Divider()
             HStack {
@@ -500,7 +514,7 @@ struct SettingsTab: View {
             ThemeSettingsSection(settings: settings)
 
             Divider()
-            Text(tr("Tab yang ditampilkan", "Visible tabs")).font(.subheadline.bold())
+            Text(tr("Fitur yang ditampilkan di Beranda", "Features shown on Home")).font(.subheadline.bold())
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 4) {
                 ForEach(AppTab.allCases.filter { $0 != .settings }, id: \.self) { t in
                     Toggle(isOn: Binding(
@@ -589,7 +603,10 @@ struct SettingsTab: View {
 /// dengan Command Line Tools saja, tanpa plugin SwiftUIMacros dari Xcode penuh.
 final class UIState: ObservableObject {
     static let shared = UIState()
-    @Published var tab = AppTab.dashboard.rawValue
+    static let home = "home"
+    @Published var tab = UIState.home
+    @Published var search = ""
+    @Published var editFavorites = false
     @Published var newID = ""
     @Published var loginOn = LoginItem.enabled
     @Published var loginError: String?
