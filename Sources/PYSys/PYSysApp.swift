@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)   // tanpa ikon Dock
         Notifier.requestAuthorization()
+        AgentMonitor.shared.recoverAfterCrash()
         _ = AetherCore.shared
         ScrollReverser.shared.apply(prompt: false)
         ClickMenu.shared.apply(prompt: false)

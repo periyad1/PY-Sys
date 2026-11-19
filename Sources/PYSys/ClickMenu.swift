@@ -626,14 +626,22 @@ final class ClickMenu: NSObject, ObservableObject {
         done(tr("Ditambahkan ke folder favorit", "Added to Common Folders"))
     }
 
+    /// Alias Finder dibuat langsung lewat bookmark data, tanpa AppleScript (aman dari nama file aneh).
     @objc private func doShortcut() {
-        let list = targets.map { "POSIX file \"\($0.path.replacingOccurrences(of: "\"", with: "\\\""))\"" }.joined(separator: ", ")
-        let src = "tell application \"Finder\" to make new alias file at desktop to {\(list)}"
-        var err: NSDictionary?
-        _ = NSAppleScript(source: src)?.executeAndReturnError(&err)
-        if let err { lastResult = "\(err[NSAppleScript.errorMessage] ?? err)" } else {
-            done(tr("Shortcut dibuat di Desktop", "Shortcut created on Desktop"))
+        let desktop = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Desktop", isDirectory: true)
+        var made = 0
+        var lastError: Error?
+        for u in targets {
+            do {
+                let data = try u.bookmarkData(options: .suitableForBookmarkFile, includingResourceValuesForKeys: nil, relativeTo: nil)
+                let name = u.lastPathComponent + tr(" alias", " alias")
+                let dest = Self.unique(desktop, name, "")
+                try URL.writeBookmarkData(data, to: dest)
+                made += 1
+            } catch { lastError = error }
         }
+        if made > 0 { done(tr("\(made) shortcut dibuat di Desktop", "\(made) shortcut(s) created on the Desktop")) }
+        if let e = lastError { lastResult = e.localizedDescription }
     }
 
     @objc private func doAirDrop() {

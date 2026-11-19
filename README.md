@@ -49,9 +49,10 @@ Juga: dua bahasa (Indonesia/English), tema, widget menu bar, dan pembaruan otoma
 
 1. Unduh **PY-Sys-x.y.z.dmg** dari [Releases](../../releases/latest).
 2. Buka DMG, seret **PY-Sys** ke **Applications**, lalu buka.
-3. Bila muncul peringatan "pengembang tidak dikenal": **System Settings → Privacy & Security → Open Anyway**.
-4. Untuk Jendela, Clipboard, Klik Kanan+, dan Scroll Reverser: izinkan PY-Sys di **Privacy & Security → Accessibility**.
-5. Pembaruan otomatis: **Utility → Pengaturan → Pembaruan**, isi nama repo ini (`pemilik/PY-Sys`).
+3. (Opsional) Cek keaslian: `shasum -a 256 ~/Downloads/PY-Sys-x.y.z.dmg` harus sama dengan kode SHA-256 di halaman rilis.
+4. Bila muncul peringatan "pengembang tidak dikenal": **System Settings → Privacy & Security → Open Anyway**.
+5. Untuk Jendela, Clipboard, Klik Kanan+, dan Scroll Reverser: izinkan PY-Sys di **Privacy & Security → Accessibility**.
+6. Pembaruan otomatis: **Utility → Pengaturan → Pembaruan**, isi nama repo ini (`pemilik/PY-Sys`).
 
 ## Build dari kode
 

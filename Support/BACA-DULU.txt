@@ -1,4 +1,4 @@
-PY-Sys 1.6.1 — cara memasang
+PY-Sys 1.6.2 — cara memasang
 ======================
 
 1. Seret PY-Sys ke folder Applications (di jendela ini).
@@ -55,3 +55,6 @@ Baru di versi 1.6
 
 Baru di versi 1.6.1
    • Pembaruan otomatis hanya memasang versi yang ditandatangani pembuat resmi PY-Sys; rilis palsu ditolak.
+
+Baru di versi 1.6.2
+   • Perbaikan keamanan kecil (nama file aneh, pembaruan, pemulihan agen AI) dan kode SHA-256 di setiap rilis.

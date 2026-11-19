@@ -251,19 +251,21 @@ final class Updater: ObservableObject {
             // Skrip kecil yang menunggu PY-Sys keluar, menukar aplikasinya, lalu membuka versi baru.
             // Bila penukaran gagal, versi lama dikembalikan.
             let backup = dir.appendingPathComponent("PY-Sys-lama.app").path
+            // Path tidak pernah ditulis ke dalam skrip; dikirim sebagai argumen ($1–$4) supaya kebal karakter aneh.
             let script = """
             #!/bin/bash
-            for i in $(seq 1 100); do kill -0 \(getpid()) 2>/dev/null || break; sleep 0.2; done
-            rm -rf "\(backup)"
-            if mv "\(appPath)" "\(backup)"; then
-              if /usr/bin/ditto "\(newApp.path)" "\(appPath)"; then
-                rm -rf "\(backup)"
+            PID="$1"; APP="$2"; NEW="$3"; BAK="$4"
+            for i in $(seq 1 100); do kill -0 "$PID" 2>/dev/null || break; sleep 0.2; done
+            rm -rf "$BAK"
+            if mv "$APP" "$BAK"; then
+              if /usr/bin/ditto "$NEW" "$APP"; then
+                rm -rf "$BAK"
               else
-                rm -rf "\(appPath)"; mv "\(backup)" "\(appPath)"
+                rm -rf "$APP"; mv "$BAK" "$APP"
               fi
             fi
             /System/Library/CoreServices/pbs -update 2>/dev/null
-            open "\(appPath)"
+            open "$APP"
             """
             let scriptURL = dir.appendingPathComponent("swap.sh")
             do { try script.write(to: scriptURL, atomically: true, encoding: .utf8) } catch {
@@ -273,7 +275,7 @@ final class Updater: ObservableObject {
             DispatchQueue.main.async {
                 let p = Process()
                 p.executableURL = URL(fileURLWithPath: "/bin/bash")
-                p.arguments = [scriptURL.path]
+                p.arguments = [scriptURL.path, String(getpid()), appPath, newApp.path, backup]
                 do { try p.run() } catch { self.fail(error.localizedDescription); return }
                 self.installStep = tr("Memulai ulang…", "Restarting…")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { NSApp.terminate(nil) }

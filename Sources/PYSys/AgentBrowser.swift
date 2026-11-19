@@ -45,7 +45,27 @@ final class AgentMonitor: ObservableObject {
     static let shared = AgentMonitor()
 
     @Published private(set) var agents: [AgentProc] = []
-    @Published private(set) var paused: Set<pid_t> = []
+    @Published private(set) var paused: Set<pid_t> = [] { didSet { savePaused() } }
+
+    /// Daftar agen yang dijeda disimpan ke disk, supaya bila PY-Sys crash agen itu dilanjutkan saat PY-Sys dibuka lagi.
+    private static let pausedURL: URL = {
+        let d = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("PY-Sys", isDirectory: true)
+        try? FileManager.default.createDirectory(at: d, withIntermediateDirectories: true)
+        return d.appendingPathComponent("paused-agents.json")
+    }()
+
+    private func savePaused() {
+        if paused.isEmpty { try? FileManager.default.removeItem(at: Self.pausedURL); return }
+        if let d = try? JSONEncoder().encode(Array(paused)) { try? d.write(to: Self.pausedURL, options: .atomic) }
+    }
+
+    /// Dipanggil saat PY-Sys mulai: lanjutkan agen yang tertinggal dalam keadaan dijeda.
+    func recoverAfterCrash() {
+        guard let d = try? Data(contentsOf: Self.pausedURL), let pids = try? JSONDecoder().decode([pid_t].self, from: d) else { return }
+        for pid in pids { _ = kill(pid, SIGCONT) }   // SIGCONT ke proses yang tidak dijeda tidak berpengaruh
+        try? FileManager.default.removeItem(at: Self.pausedURL)
+    }
 
     private var busySeconds: [pid_t: Double] = [:]
     private var alerted: Set<pid_t> = []

@@ -103,7 +103,7 @@ final class Uninstaller: ObservableObject {
         if failed.contains(a.url.lastPathComponent) {
             // App milik admin/root: minta Finder (akan menanyakan password)
             var err: NSDictionary?
-            let src = "tell application \"Finder\" to delete (POSIX file \"\(a.url.path)\" as alias)"
+            let src = "tell application \"Finder\" to delete (POSIX file \"\(AppleScriptText.escape(a.url.path))\" as alias)"
             _ = NSAppleScript(source: src)?.executeAndReturnError(&err)
             if err == nil { failed.removeAll { $0 == a.url.lastPathComponent } }
         }
@@ -393,5 +393,14 @@ struct FileFinderTab: View {
                     "Library, .git, node_modules, caches and package contents (.app, .photoslibrary) are skipped for safety. Duplicates are files ≥ 1 MB with exactly the same content."))
                 .font(.caption2).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }
+    }
+}
+
+
+/// Teks aman untuk disisipkan di dalam string AppleScript ("…"): garis miring terbalik dan tanda kutip di-escape.
+enum AppleScriptText {
+    static func escape(_ s: String) -> String {
+        s.replacingOccurrences(of: "\\", with: "\\\\")
+         .replacingOccurrences(of: "\"", with: "\\\"")
     }
 }

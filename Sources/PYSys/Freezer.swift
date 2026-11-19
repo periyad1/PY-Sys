@@ -207,6 +207,7 @@ final class Freezer: ObservableObject {
             let src = DispatchSource.makeSignalSource(signal: sig, queue: .main)
             src.setEventHandler { [weak self] in
                 self?.thawAll()
+                AgentMonitor.shared.resumeAll()
                 exit(0)
             }
             src.resume()

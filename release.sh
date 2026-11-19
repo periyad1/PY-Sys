@@ -44,7 +44,13 @@ else
 fi
 
 echo "▶ Membuat GitHub Release ${TAG}…"
-gh release create "$TAG" "$DMG" --title "PY-Sys $VERSION" --notes "$NOTES"
+SHA="$(shasum -a 256 "$DMG" | awk '{print $1}')"
+FULL_NOTES="${NOTES}
+
+---
+**SHA-256** \`PY-Sys-${VERSION}.dmg\`: \`${SHA}\`
+Cek keaslian setelah mengunduh: \`shasum -a 256 ~/Downloads/PY-Sys-${VERSION}.dmg\` (hasilnya harus sama persis)."
+gh release create "$TAG" "$DMG" --title "PY-Sys $VERSION" --notes "$FULL_NOTES"
 
 REPO="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
 echo "✔ Rilis selesai: https://github.com/${REPO}/releases/tag/$TAG"

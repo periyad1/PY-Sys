@@ -203,6 +203,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.6.2", "Keamanan: shortcut Desktop tanpa AppleScript, nama file aneh tidak bisa menyisipkan perintah, pembaruan lebih kebal, agen AI yang dijeda pulih setelah crash, SHA-256 di catatan rilis.",
+                "Security: Desktop shortcuts without AppleScript, odd file names can't inject commands, sturdier updates, paused AI agents recover after a crash, SHA-256 in release notes."),
         Change("1.6.1", "Keamanan: pembaruan otomatis hanya menerima rilis bertanda tangan pembuat yang sama; skrip pengaman GitHub dan cadangan sertifikat.",
                 "Security: automatic updates only accept releases signed by the same publisher; GitHub hardening and certificate backup scripts."),
         Change("1.6", "Logo oranye baru dan tema PY-Sys; tampilan Beranda dengan ringkasan, pencarian fitur, favorit, dan semua fitur berlabel.",
