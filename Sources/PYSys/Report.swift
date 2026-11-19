@@ -203,6 +203,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.6.3", "Ikon fitur berwarna per kategori (bisa diganti 4 gaya), warna aksen pilihan (oranye, grafit, aksen macOS, biru, hijau, ungu, merah muda, teal, kustom), mode Gelap pekat, menu tema cepat, tombol Bebaskan RAM di Beranda, repo pembaruan bawaan.",
+                "Feature icons coloured by category (4 styles), accent presets (orange, graphite, macOS accent, blue, green, purple, pink, teal, custom), Pure dark mode, quick theme menu, Free up RAM on Home, built-in update repo."),
         Change("1.6.2", "Keamanan: shortcut Desktop tanpa AppleScript, nama file aneh tidak bisa menyisipkan perintah, pembaruan lebih kebal, agen AI yang dijeda pulih setelah crash, SHA-256 di catatan rilis.",
                 "Security: Desktop shortcuts without AppleScript, odd file names can't inject commands, sturdier updates, paused AI agents recover after a crash, SHA-256 in release notes."),
         Change("1.6.1", "Keamanan: pembaruan otomatis hanya menerima rilis bertanda tangan pembuat yang sama; skrip pengaman GitHub dan cadangan sertifikat.",
@@ -235,7 +237,7 @@ struct AboutView: View {
                 HStack(spacing: 12) {
                     Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 56, height: 56)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("PY-Sys").font(.system(.title, design: .rounded).weight(.heavy)).foregroundStyle(Theme.accent)
+                        Text("PY-Sys").font(.system(.title, design: .rounded).weight(.heavy)).foregroundStyle(Theme.brand)
                         Text(tr("Versi \(AppInfo.version) · oleh \(AppInfo.author)", "Version \(AppInfo.version) · by \(AppInfo.author)"))
                             .foregroundStyle(.secondary)
                     }

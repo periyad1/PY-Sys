@@ -39,9 +39,10 @@ struct RootView: View {
             let current = AppTab(rawValue: ui.tab)
             HStack(spacing: 6) {
                 Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 20, height: 20)
-                Text("PY-Sys").font(.system(.headline, design: .rounded).weight(.heavy)).foregroundStyle(Theme.accent)
+                Text("PY-Sys").font(.system(.headline, design: .rounded).weight(.heavy)).foregroundStyle(Theme.brand)
                 Text("· " + (current?.title ?? tr("Beranda", "Home"))).font(.system(.headline, design: .rounded)).foregroundStyle(.secondary)
                 Spacer()
+                QuickThemeMenu(settings: settings)
                 PressureBadge(level: core.mem.pressure)
             }
             UpdateBanner()

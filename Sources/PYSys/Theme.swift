@@ -5,21 +5,33 @@ import UniformTypeIdentifiers
 // MARK: - Penyimpanan & penerapan tema
 
 enum Theme {
-    /// Warna aksen aktif: kustom dari slider, atau aksen bawaan macOS.
+    /// Warna aksen aktif (tombol, sakelar, tautan). Selalu versi yang terbaca di mode terang dan gelap.
     static var accent: Color {
         let s = AetherCore.shared.settings
-        return s.accentCustom ? Color(hue: s.accentHue / 360, saturation: 0.72, brightness: 0.88) : Color.accentColor
+        return Color(nsColor: (AccentPreset(rawValue: s.accentPreset) ?? .brand).color(hue: s.accentHue))
+    }
+
+    /// Oranye identitas PY-Sys untuk nama aplikasi: oranye tua di mode terang, oranye terang di mode gelap.
+    static let brand = Color(nsColor: adaptive(hex(0xC2410C), hex(0xFB923C)))
+
+    static func hex(_ v: UInt32) -> NSColor {
+        NSColor(srgbRed: CGFloat((v >> 16) & 0xFF) / 255, green: CGFloat((v >> 8) & 0xFF) / 255, blue: CGFloat(v & 0xFF) / 255, alpha: 1)
+    }
+
+    /// Warna yang berganti otomatis mengikuti mode terang/gelap.
+    static func adaptive(_ light: NSColor, _ dark: NSColor) -> NSColor {
+        NSColor(name: nil) { ap in ap.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? dark : light }
     }
 
     /// Kunci perubahan tema, dipakai untuk menggambar ulang seluruh panel.
     static func key(_ s: Settings) -> String {
-        "\(s.accentCustom)|\(s.bgKind)|\(s.bgImageName)"
+        "\(s.accentPreset)|\(Int(s.accentHue))|\(s.iconStyle)|\(s.themeMode)|\(s.bgKind)|\(s.bgImageName)"
     }
 
     static func applyAppearance(_ mode: String) {
         switch mode {
         case "light": NSApp.appearance = NSAppearance(named: .aqua)
-        case "dark": NSApp.appearance = NSAppearance(named: .darkAqua)
+        case "dark", "darkPure": NSApp.appearance = NSAppearance(named: .darkAqua)
         default: NSApp.appearance = nil
         }
     }
@@ -78,6 +90,7 @@ struct ThemeBackground: View {
 
     var body: some View {
         ZStack {
+            if settings.themeMode == "darkPure" { Color.black.opacity(0.92) }
             switch settings.bgKind {
             case "color":
                 Color(hue: settings.bgHue / 360, saturation: 0.55, brightness: settings.bgBrightness)
@@ -131,18 +144,17 @@ struct ThemeSettingsSection: View {
             Picker(tr("Tampilan", "Appearance"), selection: Binding(
                 get: { settings.themeMode },
                 set: { settings.themeMode = $0; Theme.applyAppearance($0) })) {
-                Text(tr("Ikuti sistem", "System")).tag("system")
-                Text(tr("Terang", "Light")).tag("light")
-                Text(tr("Gelap", "Dark")).tag("dark")
+                ForEach(AppearanceMode.allCases) { Text($0.title).tag($0.rawValue) }
             }
             .pickerStyle(.segmented)
 
-            Toggle(tr("Warna aksen kustom", "Custom accent color"), isOn: $settings.accentCustom)
-            if settings.accentCustom {
-                HStack(spacing: 8) {
-                    Circle().fill(Theme.accent).frame(width: 16, height: 16)
-                    HueSlider(hue: $settings.accentHue)
-                }
+            Text(tr("Gaya ikon", "Icon style")).font(.caption.bold())
+            IconStylePicker(settings: settings)
+
+            Text(tr("Warna aksen", "Accent color")).font(.caption.bold())
+            AccentPicker(settings: settings)
+            if settings.accentPreset == AccentPreset.custom.rawValue {
+                HueSlider(hue: $settings.accentHue)
             }
 
             Picker(tr("Latar", "Background"), selection: $settings.bgKind) {
@@ -202,12 +214,13 @@ struct ThemeSettingsSection: View {
                     .font(.caption2).foregroundStyle(.secondary)
             }
 
-            Button(tr("Kembali ke tema PY-Sys (oranye)", "Back to the PY-Sys theme (orange)")) {
+            Button(tr("Kembali ke tema bawaan PY-Sys", "Back to the default PY-Sys theme")) {
                 settings.themeMode = "system"
                 Theme.applyAppearance("system")
-                settings.accentCustom = true
+                settings.accentPreset = AccentPreset.brand.rawValue
+                settings.iconStyle = IconStyle.category.rawValue
                 settings.accentHue = Brand.accentHue
-                settings.bgKind = "color"
+                settings.bgKind = "none"
                 settings.bgHue = Brand.bgHue
                 settings.bgBrightness = Brand.bgBrightness
                 settings.bgOpacity = Brand.bgOpacity
@@ -215,5 +228,243 @@ struct ThemeSettingsSection: View {
             }
             .controlSize(.small)
         }
+    }
+}
+
+
+// MARK: - Pilihan tema: tampilan, gaya ikon, warna aksen
+
+enum AppearanceMode: String, CaseIterable, Identifiable {
+    case system, light, dark, darkPure
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .system: return tr("Sistem", "System")
+        case .light: return tr("Terang", "Light")
+        case .dark: return tr("Gelap", "Dark")
+        case .darkPure: return tr("Gelap pekat", "Pure dark")
+        }
+    }
+    var symbol: String {
+        switch self {
+        case .system: return "circle.lefthalf.filled"
+        case .light: return "sun.max"
+        case .dark: return "moon"
+        case .darkPure: return "moon.fill"
+        }
+    }
+}
+
+enum AccentPreset: String, CaseIterable, Identifiable {
+    case brand, graphite, system, blue, green, purple, pink, teal, custom
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .brand: return tr("Oranye PY-Sys", "PY-Sys orange")
+        case .graphite: return tr("Grafit", "Graphite")
+        case .system: return tr("Aksen macOS", "macOS accent")
+        case .blue: return tr("Biru", "Blue")
+        case .green: return tr("Hijau", "Green")
+        case .purple: return tr("Ungu", "Purple")
+        case .pink: return tr("Merah muda", "Pink")
+        case .teal: return "Teal"
+        case .custom: return tr("Kustom", "Custom")
+        }
+    }
+    /// Setiap warna punya versi gelap untuk mode terang dan versi terang untuk mode gelap, supaya teks tetap terbaca.
+    func color(hue: Double) -> NSColor {
+        switch self {
+        case .brand: return Theme.adaptive(Theme.hex(0xC2410C), Theme.hex(0xFB923C))
+        case .graphite: return Theme.adaptive(Theme.hex(0x3A3A3C), Theme.hex(0xD1D1D6))
+        case .system: return .controlAccentColor
+        case .blue: return Theme.adaptive(Theme.hex(0x0A64D6), Theme.hex(0x4C9BFF))
+        case .green: return Theme.adaptive(Theme.hex(0x15803D), Theme.hex(0x4ADE80))
+        case .purple: return Theme.adaptive(Theme.hex(0x6D28D9), Theme.hex(0xA78BFA))
+        case .pink: return Theme.adaptive(Theme.hex(0xBE185D), Theme.hex(0xF472B6))
+        case .teal: return Theme.adaptive(Theme.hex(0x0F766E), Theme.hex(0x2DD4BF))
+        case .custom:
+            return Theme.adaptive(NSColor(hue: hue / 360, saturation: 0.80, brightness: 0.62, alpha: 1),
+                                 NSColor(hue: hue / 360, saturation: 0.55, brightness: 0.95, alpha: 1))
+        }
+    }
+}
+
+enum IconStyle: String, CaseIterable, Identifiable {
+    case mono, category = "cat", feature = "feat", outline
+    var id: String { rawValue }
+    var letter: String {
+        switch self { case .mono: return "A"; case .category: return "B"; case .feature: return "C"; case .outline: return "D" }
+    }
+    var title: String {
+        switch self {
+        case .mono: return tr("Monokrom", "Monochrome")
+        case .category: return tr("Per kategori", "By category")
+        case .feature: return tr("Per fitur", "By feature")
+        case .outline: return tr("Garis", "Outline")
+        }
+    }
+    static var current: IconStyle {
+        IconStyle(rawValue: AetherCore.shared.settings.iconStyle) ?? .category
+    }
+}
+
+extension TabCategory {
+    var color: NSColor {
+        switch self {
+        case .monitoring: return Theme.hex(0x0A64D6)
+        case .cleaner: return Theme.hex(0x15803D)
+        case .utility: return Theme.hex(0x6D28D9)
+        }
+    }
+}
+
+extension AppTab {
+    /// Warna khas per fitur (gaya C), cukup gelap agar simbol putih terbaca.
+    var color: NSColor {
+        let h: UInt32
+        switch self {
+        case .dashboard: h = 0x1D4ED8
+        case .overview: h = 0x0F766E
+        case .ram: h = 0x2563EB
+        case .cpu: h = 0x4F46E5
+        case .network: h = 0x0E7490
+        case .sensors: h = 0xDC2626
+        case .agents: h = 0x7C3AED
+        case .browser: h = 0x0369A1
+        case .history: h = 0x475569
+        case .apps: h = 0x334155
+        case .cryo: h = 0x0891B2
+        case .focus: h = 0x9333EA
+        case .tabsleep: h = 0x4338CA
+        case .storage: h = 0x64748B
+        case .uninstall: h = 0xB91C1C
+        case .files: h = 0xA16207
+        case .toggles: h = 0x4B5563
+        case .clickmenu: h = 0x2563EB
+        case .windows: h = 0x0D9488
+        case .clipboard: h = 0x475569
+        case .displays: h = 0xCA8A04
+        case .scheduler: h = 0xDB2777
+        case .scroll: h = 0x7C3AED
+        case .tools: h = 0x57534E
+        case .settings: h = 0x6B7280
+        }
+        return Theme.hex(h)
+    }
+}
+
+/// Ikon fitur sesuai gaya yang dipilih.
+struct FeatureIcon: View {
+    let tab: AppTab
+    var size: CGFloat = 30
+    var style: IconStyle = .current
+
+    var body: some View {
+        let glyph = Image(systemName: tab.icon).font(.system(size: size * 0.5, weight: style == .outline ? .semibold : .medium))
+        switch style {
+        case .mono:
+            glyph.frame(width: size, height: size).foregroundStyle(Color.primary.opacity(0.8))
+                .background(RoundedRectangle(cornerRadius: size * 0.27).fill(Color.primary.opacity(0.08)))
+        case .category:
+            glyph.frame(width: size, height: size).foregroundStyle(.white)
+                .background(RoundedRectangle(cornerRadius: size * 0.27).fill(Color(nsColor: tab.category.color)))
+        case .feature:
+            glyph.frame(width: size, height: size).foregroundStyle(.white)
+                .background(RoundedRectangle(cornerRadius: size * 0.27).fill(Color(nsColor: tab.color)))
+        case .outline:
+            Image(systemName: tab.icon).font(.system(size: size * 0.62, weight: .semibold))
+                .frame(width: size, height: size).foregroundStyle(Color.primary)
+        }
+    }
+}
+
+struct IconStylePicker: View {
+    @ObservedObject var settings: Settings
+    var body: some View {
+        HStack(spacing: 6) {
+            ForEach(IconStyle.allCases) { st in
+                let on = IconStyle.current == st
+                Button { settings.iconStyle = st.rawValue } label: {
+                    VStack(spacing: 4) {
+                        HStack(spacing: 2) {
+                            FeatureIcon(tab: .ram, size: 18, style: st)
+                            FeatureIcon(tab: .cryo, size: 18, style: st)
+                            FeatureIcon(tab: .clipboard, size: 18, style: st)
+                        }
+                        Text("\(st.letter) · \(st.title)").font(.caption2).lineLimit(1).minimumScaleFactor(0.8)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(6)
+                    .background(RoundedRectangle(cornerRadius: 8).fill(on ? Theme.accent.opacity(0.15) : Color.primary.opacity(0.04)))
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(on ? Theme.accent : Color.clear, lineWidth: 1.5))
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}
+
+struct AccentPicker: View {
+    @ObservedObject var settings: Settings
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(AccentPreset.allCases) { p in
+                let on = settings.accentPreset == p.rawValue
+                Button { settings.accentPreset = p.rawValue } label: {
+                    ZStack {
+                        if p == .custom {
+                            Circle().fill(AngularGradient(colors: [.red, .yellow, .green, .blue, .purple, .red], center: .center))
+                        } else {
+                            Circle().fill(Color(nsColor: p.color(hue: settings.accentHue)))
+                        }
+                        if on { Image(systemName: "checkmark").font(.system(size: 9, weight: .bold)).foregroundStyle(.white) }
+                    }
+                    .frame(width: 20, height: 20)
+                    .overlay(Circle().stroke(Color.primary.opacity(on ? 0.6 : 0.15), lineWidth: on ? 2 : 1))
+                }
+                .buttonStyle(.plain)
+                .help(p.title)
+            }
+        }
+    }
+}
+
+/// Tombol cepat di kepala panel: ganti tampilan, gaya ikon, dan warna aksen tanpa membuka Pengaturan.
+struct QuickThemeMenu: View {
+    @ObservedObject var settings: Settings
+    var body: some View {
+        Menu {
+            Picker(tr("Tampilan", "Appearance"), selection: Binding(
+                get: { settings.themeMode },
+                set: { settings.themeMode = $0; Theme.applyAppearance($0) })) {
+                ForEach(AppearanceMode.allCases) { Label($0.title, systemImage: $0.symbol).tag($0.rawValue) }
+            }
+            .pickerStyle(.inline)
+            Picker(tr("Gaya ikon", "Icon style"), selection: Binding(
+                get: { IconStyle.current.rawValue },
+                set: { settings.iconStyle = $0 })) {
+                ForEach(IconStyle.allCases) { Text("\($0.letter) · \($0.title)").tag($0.rawValue) }
+            }
+            .pickerStyle(.inline)
+            Picker(tr("Warna aksen", "Accent color"), selection: $settings.accentPreset) {
+                ForEach(AccentPreset.allCases) { Text($0.title).tag($0.rawValue) }
+            }
+            .pickerStyle(.inline)
+            Divider()
+            Button(tr("Kembali ke tema bawaan", "Reset to default theme")) {
+                settings.themeMode = "system"
+                Theme.applyAppearance("system")
+                settings.iconStyle = "cat"
+                settings.accentPreset = AccentPreset.brand.rawValue
+                settings.bgKind = "none"
+            }
+        } label: {
+            Image(systemName: "paintpalette")
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .help(tr("Tema cepat", "Quick theme"))
     }
 }

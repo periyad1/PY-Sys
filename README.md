@@ -52,7 +52,7 @@ Juga: dua bahasa (Indonesia/English), tema, widget menu bar, dan pembaruan otoma
 3. (Opsional) Cek keaslian: `shasum -a 256 ~/Downloads/PY-Sys-x.y.z.dmg` harus sama dengan kode SHA-256 di halaman rilis.
 4. Bila muncul peringatan "pengembang tidak dikenal": **System Settings → Privacy & Security → Open Anyway**.
 5. Untuk Jendela, Clipboard, Klik Kanan+, dan Scroll Reverser: izinkan PY-Sys di **Privacy & Security → Accessibility**.
-6. Pembaruan otomatis: **Utility → Pengaturan → Pembaruan**, isi nama repo ini (`pemilik/PY-Sys`).
+6. Pembaruan otomatis sudah aktif sejak awal (repo resmi `periyad1/PY-Sys`). PY-Sys memberi notifikasi saat ada versi baru dan hanya memasang rilis yang ditandatangani pembuat resmi.
 
 ## Build dari kode
 

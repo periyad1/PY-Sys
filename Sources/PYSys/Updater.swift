@@ -22,6 +22,7 @@ final class Updater: ObservableObject {
     @Published private(set) var dismissed: String? { didSet { UserDefaults.standard.set(dismissed, forKey: "updateDismissed") } }
 
     private var timer: Timer?
+    static let officialRepo = "periyad1/PY-Sys"
 
     static var current: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
@@ -33,7 +34,8 @@ final class Updater: ObservableObject {
     var showBanner: Bool { available && dismissed != latest }
 
     init() {
-        repo = UserDefaults.standard.string(forKey: "updateRepo") ?? ""
+        // Repo resmi PY-Sys sebagai bawaan: pembaruan langsung aktif tanpa perlu mengisi apa pun.
+        repo = UserDefaults.standard.string(forKey: "updateRepo") ?? Updater.officialRepo
         autoCheck = UserDefaults.standard.object(forKey: "updateAuto") as? Bool ?? true
         dismissed = UserDefaults.standard.string(forKey: "updateDismissed")
     }
@@ -334,7 +336,14 @@ struct UpdateSection: View {
                     .controlSize(.small)
                     .disabled(up.checking || up.repo.isEmpty)
             }
-            Toggle(tr("Periksa otomatis setiap hari", "Check automatically every day"), isOn: $up.autoCheck).font(.caption)
+            HStack {
+                Toggle(tr("Periksa otomatis setiap hari", "Check automatically every day"), isOn: $up.autoCheck).font(.caption)
+                Spacer()
+                if up.repo != Updater.officialRepo {
+                    Button(tr("Pakai repo resmi", "Use official repo")) { up.repo = Updater.officialRepo }
+                        .buttonStyle(.borderless).font(.caption)
+                }
+            }
             if let s = up.status {
                 Text(s).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }

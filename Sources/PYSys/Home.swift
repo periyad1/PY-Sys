@@ -32,19 +32,35 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 10) {
             SummaryCard(core: core)
 
-            HStack(spacing: 6) {
-                Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                TextField(tr("Cari fitur… (mis. clipboard, uninstall)", "Search features… (e.g. clipboard, uninstall)"), text: $ui.search)
-                    .textFieldStyle(.plain)
-                    .onSubmit { if let first = results.first { ui.search = ""; open(first) } }
-                if !ui.search.isEmpty {
-                    Button { ui.search = "" } label: { Image(systemName: "xmark.circle.fill") }
-                        .buttonStyle(.borderless).foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                HStack(spacing: 6) {
+                    Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+                    TextField(tr("Cari fitur…", "Search features…"), text: $ui.search)
+                        .textFieldStyle(.plain)
+                        .onSubmit { if let first = results.first { ui.search = ""; open(first) } }
+                    if !ui.search.isEmpty {
+                        Button { ui.search = "" } label: { Image(systemName: "xmark.circle.fill") }
+                            .buttonStyle(.borderless).foregroundStyle(.secondary)
+                    }
                 }
+                .padding(.horizontal, 9)
+                .padding(.vertical, 6)
+                .background(RoundedRectangle(cornerRadius: 8).fill(Color.primary.opacity(0.07)))
+
+                Button {
+                    core.freeUpRAM()
+                } label: {
+                    Label(tr("Bebaskan RAM", "Free up RAM"), systemImage: "wind")
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Theme.brand)
+                .controlSize(.regular)
+                .help(tr("Bekukan app idle yang tidak terlihat supaya macOS bisa mengompres memorinya",
+                         "Freeze idle, hidden apps so macOS can compress their memory"))
             }
-            .padding(.horizontal, 9)
-            .padding(.vertical, 6)
-            .background(RoundedRectangle(cornerRadius: 8).fill(Color.primary.opacity(0.07)))
+            if let m = core.freeUpMessage {
+                Text(m).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
@@ -56,7 +72,7 @@ struct HomeView: View {
                         }
                     } else {
                         HStack(spacing: 5) {
-                            Image(systemName: "star.fill").foregroundStyle(.orange).font(.caption)
+                            Image(systemName: "star.fill").foregroundStyle(.yellow).font(.caption)
                             SectionTitle(text: tr("Favorit", "Favorites"))
                             Spacer()
                             Button(ui.editFavorites ? tr("Selesai", "Done") : tr("Ubah", "Edit")) { ui.editFavorites.toggle() }
@@ -97,7 +113,7 @@ struct HomeView: View {
 struct SectionTitle: View {
     let text: String
     var body: some View {
-        Text(text.uppercased()).font(.system(.caption, design: .rounded).weight(.heavy)).foregroundStyle(Theme.accent.opacity(0.85)).tracking(0.6)
+        Text(text.uppercased()).font(.system(.caption, design: .rounded).weight(.heavy)).foregroundStyle(.secondary).tracking(0.6)
     }
 }
 
@@ -117,16 +133,11 @@ struct TileGrid: View {
                 } label: {
                     VStack(spacing: 4) {
                         ZStack(alignment: .topTrailing) {
-                            Image(systemName: t.icon)
-                                .font(.system(size: 15, weight: .medium))
-                                .frame(width: 30, height: 30)
-                                .foregroundStyle(highlight ? Color.orange : Theme.accent)
-                                .background(RoundedRectangle(cornerRadius: 8)
-                                    .fill((highlight ? Color.orange : Theme.accent).opacity(0.14)))
+                            FeatureIcon(tab: t, size: 30)
                             if ui.editFavorites && t != .settings {
                                 Image(systemName: fav ? "star.fill" : "star")
                                     .font(.system(size: 10))
-                                    .foregroundStyle(fav ? Color.orange : Color.secondary)
+                                    .foregroundStyle(fav ? Color.yellow : Color.secondary)
                                     .offset(x: 6, y: -5)
                             }
                         }
@@ -178,7 +189,7 @@ struct SummaryCard: View {
         let cpu = 1 - core.cpu.idle
         HStack(spacing: 12) {
             item("RAM", "\(Int((m.usedFraction * 100).rounded()))%", m.usedFraction, m.pressure.color, .ram)
-            item("Swap", String(format: "%.1f GB", swapGB), min(swapGB / 8, 1), swapGB > 4 ? .orange : Theme.accent, .ram)
+            item("Swap", String(format: "%.1f GB", swapGB), min(swapGB / 8, 1), swapGB > 6 ? .red : (swapGB > 3 ? .orange : .green), .ram)
             item("CPU", "\(Int((cpu * 100).rounded()))%", cpu, cpu > 0.7 ? .orange : .green, .cpu)
             if let t = core.cpu.cpuTemp {
                 item(tr("Suhu", "Temp"), "\(Int(t.rounded()))°C", (t - 30) / 70, t > 85 ? .red : (t > 70 ? .orange : .green), .sensors)

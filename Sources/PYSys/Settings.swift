@@ -10,7 +10,7 @@ final class Settings: ObservableObject {
         static let sEn = "scrollEnabled", sTp = "scrollTrackpadNatural", sMo = "scrollMouseNatural"
         static let sStepOn = "scrollStepEnabled", sStep = "scrollStep", sHor = "scrollHorizontal"
         static let thMode = "themeMode", thAcc = "accentCustom", thHue = "accentHue", bgKind = "bgKind", bgHue = "bgHue"
-        static let fav = "favorites", restart = "restartReminder", agCPU = "agentCPU", agMin = "agentMinutes", bar = "barItems"
+        static let fav = "favorites", accP = "accentPreset", icS = "iconStyle", restart = "restartReminder", agCPU = "agentCPU", agMin = "agentMinutes", bar = "barItems"
         static let bgBright = "bgBrightness", bgOpa = "bgOpacity", bgBlur = "bgBlur", bgImg = "bgImageName"
     }
 
@@ -51,6 +51,8 @@ final class Settings: ObservableObject {
     @Published var bgOpacity: Double { didSet { UserDefaults.standard.set(bgOpacity, forKey: K.bgOpa) } }
     @Published var bgBlur: Double { didSet { UserDefaults.standard.set(bgBlur, forKey: K.bgBlur) } }
     @Published var bgImageName: String { didSet { UserDefaults.standard.set(bgImageName, forKey: K.bgImg) } }
+    @Published var accentPreset: String { didSet { UserDefaults.standard.set(accentPreset, forKey: K.accP) } }
+    @Published var iconStyle: String { didSet { UserDefaults.standard.set(iconStyle, forKey: K.icS) } }
     @Published var favorites: [String] { didSet { UserDefaults.standard.set(favorites, forKey: K.fav) } }
     @Published var restartReminder: Bool { didSet { UserDefaults.standard.set(restartReminder, forKey: K.restart) } }
     @Published var agentCPU: Double { didSet { UserDefaults.standard.set(agentCPU, forKey: K.agCPU) } }
@@ -63,10 +65,11 @@ final class Settings: ObservableObject {
         d.register(defaults: [K.cryo: true, K.idle: 10, K.cpu: 1.0, K.bloat: 2.5,
                               K.wl: Settings.defaultWhitelist, K.lang: AppLanguage.id.rawValue, K.hidden: [String](), K.pubIP: true,
                               K.sEn: false, K.sTp: true, K.sMo: false, K.sStepOn: true, K.sStep: 3, K.sHor: true,
-                              K.thMode: "system", K.thAcc: true, K.thHue: Brand.accentHue, K.bgKind: "color", K.bgHue: Brand.bgHue,
+                              K.thMode: "system", K.thAcc: true, K.thHue: Brand.accentHue, K.bgKind: "none", K.bgHue: Brand.bgHue,
                               K.bgBright: Brand.bgBrightness, K.bgOpa: Brand.bgOpacity, K.bgBlur: 8.0, K.bgImg: "",
                               K.agCPU: 90.0, K.agMin: 5, K.bar: ["ram"], K.restart: true,
-                              K.fav: ["ram", "cryo", "agents", "clipboard", "focus"]])
+                              K.fav: ["ram", "cryo", "agents", "clipboard", "focus"],
+                              K.accP: "brand", K.icS: "cat"])
         cryoEnabled = d.bool(forKey: K.cryo)
         idleMinutes = max(2, d.integer(forKey: K.idle))
         cpuGuard = d.double(forKey: K.cpu)
@@ -94,6 +97,8 @@ final class Settings: ObservableObject {
         agentCPU = d.double(forKey: K.agCPU)
         restartReminder = d.bool(forKey: K.restart)
         favorites = d.stringArray(forKey: K.fav) ?? []
+        accentPreset = d.string(forKey: K.accP) ?? "brand"
+        iconStyle = d.string(forKey: K.icS) ?? "cat"
         agentMinutes = max(1, d.integer(forKey: K.agMin))
         barItems = d.stringArray(forKey: K.bar) ?? ["ram"]
     }
@@ -345,7 +350,7 @@ enum Brand {
 
 enum AppInfo {
     static let name = "PY-Sys"
-    static let version = "1.6.2 (2026)"
+    static let version = "1.6.3 (2026)"
     static let author = "Periyadi"
     static let email = "periyadi@telkomuniversity.ac.id"
 }
