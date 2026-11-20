@@ -295,6 +295,7 @@ struct AboutView: View {
 
                 Divider()
                 Text("© 2026 \(AppInfo.author) · \(AppInfo.email)").font(.caption).foregroundStyle(.secondary)
+                Text(tr("Kontributor: ", "Contributor: ") + AppInfo.contributors.joined(separator: ", ")).font(.caption).foregroundStyle(.secondary)
             }
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)

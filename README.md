@@ -180,4 +180,7 @@ Every push is built automatically by GitHub Actions (the **Build check** badge a
 
 ---
 
-© 2026 Periyadi · periyadi@telkomuniversity.ac.id
+**Pembuat / Author:** Periyadi · periyadi@telkomuniversity.ac.id  
+**Kontributor / Contributor:** Devie Ryana Suchendra
+
+© 2026 Periyadi

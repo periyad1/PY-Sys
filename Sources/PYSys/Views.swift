@@ -601,6 +601,7 @@ struct SettingsTab: View {
             VStack(spacing: 4) {
                 StatRow(title: tr("Versi", "Version"), value: AppInfo.version)
                 StatRow(title: tr("Pembuat", "Author"), value: AppInfo.author)
+                StatRow(title: tr("Kontributor", "Contributor"), value: AppInfo.contributors.joined(separator: ", "))
                 HStack {
                     Text("Email").foregroundStyle(.secondary)
                     Spacer()
