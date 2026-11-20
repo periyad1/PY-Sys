@@ -1,6 +1,6 @@
 <p align="center"><img src="Support/logo.png" width="128" alt="Logo PY-Sys"></p>
 
-<p align="center"><a href="https://github.com/periyad1/PY-Sys/actions/workflows/build.yml"><img src="https://github.com/periyad1/PY-Sys/actions/workflows/build.yml/badge.svg" alt="Build check"></a></p>
+<p align="center"><a href="https://github.com/periyad1/PY-Sys/actions/workflows/build.yml"><img src="https://github.com/periyad1/PY-Sys/actions/workflows/build.yml/badge.svg" alt="Build check"></a> <a href="https://github.com/periyad1/PY-Sys/releases"><img src="https://img.shields.io/github/downloads/periyad1/PY-Sys/total?label=unduhan%20%2F%20downloads&amp;color=orange" alt="Total unduhan"></a> <a href="https://github.com/periyad1/PY-Sys/releases/latest"><img src="https://img.shields.io/github/downloads/periyad1/PY-Sys/latest/total?label=versi%20terbaru%20%2F%20latest" alt="Unduhan versi terbaru"></a></p>
 
 # PY-Sys — pemantau, pembersih & utilitas Mac di menu bar
 
