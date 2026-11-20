@@ -52,6 +52,7 @@ final class AetherCore: ObservableObject {
     @Published var diskWrittenSinceBoot: UInt64 = 0
     @Published var diskReadRate = 0.0
     @Published var volume: (name: String, total: Int64, free: Int64)?
+    @Published var barBattery: BarBattery?
     @Published var diskProcs: [DiskProc] = []
     @Published var interfaces: [NetInterface] = []
     @Published var netHistory: [NetPoint] = []
@@ -203,6 +204,10 @@ final class AetherCore: ObservableObject {
     func slowTick() {
         let now = Date()
         BatteryHistory.shared.recordIfNeeded()
+        if panelOpen || settings.barItems.contains("battery") {
+            let b = BarBattery.read()
+            if b != barBattery { barBattery = b }
+        }
         let samples = ProcessScanner.scan()
         let elapsed = prevScan.map { now.timeIntervalSince($0) } ?? 0
         var cpu: [pid_t: Double] = [:]

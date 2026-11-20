@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import Darwin
+import IOKit.ps
 
 // MARK: - Argumen proses (KERN_PROCARGS2)
 
@@ -472,17 +473,69 @@ struct BrowserTab: View {
 // MARK: - Widget menu bar
 
 enum BarItem: String, CaseIterable, Identifiable {
-    case ram, cpu, temp, net, swap, agents
+    case ram, pressure, cpu, temp, net, swap, agents, frozen, battery, disk
     var id: String { rawValue }
     var title: String {
         switch self {
         case .ram: return "RAM %"
+        case .pressure: return tr("Titik warna tekanan memori", "Memory pressure dot")
         case .cpu: return "CPU %"
         case .temp: return tr("Suhu CPU", "CPU temperature")
         case .net: return tr("Jaringan ↓↑", "Network ↓↑")
         case .swap: return "Swap"
         case .agents: return tr("Jumlah agen AI", "AI agent count")
+        case .frozen: return tr("Jumlah app beku ❄︎", "Frozen app count ❄︎")
+        case .battery: return tr("Baterai (% dan sisa waktu)", "Battery (% and time left)")
+        case .disk: return tr("Ruang disk tersisa", "Free disk space")
         }
+    }
+}
+
+/// Baterai untuk menu bar, dibaca lewat IOPowerSources (ringan).
+struct BarBattery: Equatable {
+    var percent: Int
+    var charging: Bool
+    var onAC: Bool
+    var minutesLeft: Int?
+
+    static func read() -> BarBattery? {
+        guard let info = IOPSCopyPowerSourcesInfo()?.takeRetainedValue(),
+              let list = IOPSCopyPowerSourcesList(info)?.takeRetainedValue() as? [CFTypeRef] else { return nil }
+        for ps in list {
+            guard let d = IOPSGetPowerSourceDescription(info, ps)?.takeUnretainedValue() as? [String: Any],
+                  d[kIOPSTypeKey] as? String == kIOPSInternalBatteryType,
+                  let cur = d[kIOPSCurrentCapacityKey] as? Int,
+                  let max = d[kIOPSMaxCapacityKey] as? Int, max > 0 else { continue }
+            let onAC = d[kIOPSPowerSourceStateKey] as? String == kIOPSACPowerValue
+            let tte = d[kIOPSTimeToEmptyKey] as? Int ?? -1
+            return BarBattery(percent: Int((Double(cur) / Double(max) * 100).rounded()),
+                              charging: d[kIOPSIsChargingKey] as? Bool ?? false,
+                              onAC: onAC, minutesLeft: (!onAC && tte > 0) ? tte : nil)
+        }
+        return nil
+    }
+
+    var text: String {
+        var s = (charging || onAC ? "⚡︎" : "Bat ") + "\(percent)%"
+        if let m = minutesLeft { s += String(format: " %d:%02d", m / 60, m % 60) }
+        return s
+    }
+}
+
+/// Titik warna (bukan template) agar warnanya tetap tampil di menu bar.
+enum PressureDot {
+    private static var cache: [Int: NSImage] = [:]
+    static func image(_ level: PressureLevel) -> NSImage {
+        if let i = cache[level.rawValue] { return i }
+        let color: NSColor = level == .normal ? .systemGreen : (level == .warning ? .systemYellow : .systemRed)
+        let img = NSImage(size: NSSize(width: 9, height: 9), flipped: false) { r in
+            color.setFill()
+            NSBezierPath(ovalIn: r.insetBy(dx: 0.5, dy: 0.5)).fill()
+            return true
+        }
+        img.isTemplate = false
+        cache[level.rawValue] = img
+        return img
     }
 }
 

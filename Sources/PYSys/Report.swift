@@ -205,6 +205,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.7.2", "Empat pilihan baru di menu bar: titik warna tekanan memori, jumlah app beku, baterai (% dan sisa waktu), dan ruang disk tersisa. Nama kontributor tampil di Pengaturan dan jendela Tentang.",
+                "Four new menu bar options: a memory pressure dot, frozen app count, battery (% and time left), and free disk space. Contributor name shown in Settings and the About window."),
         Change("1.7.1", "Ekspor/impor pengaturan untuk pindah Mac atau cadangan. Laporan masalah sederhana: pemberitahuan setelah crash, salin, simpan, atau laporkan di GitHub. Teks riwayat 1.6.7 diperbaiki (20 detik).",
                 "Export/import settings to move Macs or keep a backup. Simple problem reports: a notice after a crash, then copy, save or report on GitHub. Fixed the 1.6.7 changelog text (20 seconds)."),
         Change("1.7", "Panduan awal 4 langkah untuk pengguna baru (bahasa, izin dengan status ✓/✗, tampilan, tips). Bisa dibuka lagi di Pengaturan. Setiap perubahan kode kini dicek build otomatis di GitHub.",

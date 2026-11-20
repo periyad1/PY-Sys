@@ -59,6 +59,10 @@ struct MenuBarLabel: View {
             case .net: parts.append("↓\(BarFmt.rate(core.netDown)) ↑\(BarFmt.rate(core.netUp))")
             case .swap: parts.append("Swap \(BarFmt.gb(core.mem.swapUsed))")
             case .agents: parts.append("AI \(agents.agents.count)")
+            case .pressure: break                      // digambar sebagai titik warna
+            case .frozen: parts.append("❄︎ \(core.freezer.frozen.count)")
+            case .battery: if let b = core.barBattery { parts.append(b.text) }
+            case .disk: if let v = core.volume { parts.append("SSD \(BarFmt.gb(UInt64(max(0, v.free))))") }
             }
         }
         return parts.joined(separator: "  ")
@@ -67,6 +71,7 @@ struct MenuBarLabel: View {
     var body: some View {
         HStack(spacing: 3) {
             if core.mem.pressure == .normal { Image(nsImage: Brand.menuGlyph) } else { Image(systemName: core.mem.pressure.symbol) }
+            if settings.barItems.contains(BarItem.pressure.rawValue) { Image(nsImage: PressureDot.image(core.mem.pressure)) }
             let t = text
             if !t.isEmpty { Text(t).monospacedDigit() }
             if updater.available { Image(systemName: "arrow.down.circle.fill") }

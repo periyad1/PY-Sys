@@ -56,7 +56,7 @@ Semua fitur memakai API publik macOS: tanpa root, tanpa mematikan SIP, dan tidak
 | Scroll Reverser | Arah scroll terpisah untuk trackpad dan mouse |
 | Alat | Info sistem, kesehatan baterai, ekspor laporan PDF |
 
-Juga: dua bahasa (Indonesia/English), widget menu bar (RAM, CPU, suhu, jaringan, swap, agen AI), mode hemat daya saat panel tertutup, dan pembaruan otomatis satu klik dari GitHub Releases.
+Juga: dua bahasa (Indonesia/English), widget menu bar (RAM, titik tekanan memori, CPU, suhu, jaringan, swap, agen AI, app beku, baterai, ruang disk), mode hemat daya saat panel tertutup, dan pembaruan otomatis satu klik dari GitHub Releases.
 
 ## Memasang
 
@@ -145,7 +145,7 @@ Every feature uses public macOS APIs: no root, no SIP changes, and no system fil
 | Scroll Reverser | Separate scroll direction for trackpad and mouse |
 | Tools | System info, battery health, PDF report export |
 
-Also: two languages (English/Bahasa Indonesia), menu bar widgets (RAM, CPU, temperature, network, swap, AI agents), power saving while the panel is closed, and one-click automatic updates from GitHub Releases.
+Also: two languages (English/Bahasa Indonesia), menu bar widgets (RAM, memory pressure dot, CPU, temperature, network, swap, AI agents, frozen apps, battery, free disk space), power saving while the panel is closed, and one-click automatic updates from GitHub Releases.
 
 ### Installing
 
