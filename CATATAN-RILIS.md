@@ -5,6 +5,10 @@ Saat `./release.sh` dijalankan, isi bagian itu menjadi catatan rilis versi baru.
 
 ## Belum dirilis
 
+## 1.7.3 — 2026-11-21
+
+- QRIS "Dukung pengembangan PY-Sys" di Pengaturan diganti dengan kode baru (PY-Sys, Service).
+
 ## 1.7.2 — 2026-11-20
 
 - Empat pilihan baru di menu bar: titik warna tekanan memori, jumlah app beku ❄︎, baterai (% dan sisa waktu), dan ruang disk tersisa.

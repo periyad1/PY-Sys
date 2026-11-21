@@ -205,6 +205,8 @@ enum FeatureCatalog {
     }
 
     static let changelog: [Change] = [
+        Change("1.7.3", "QRIS \"Dukung pengembangan PY-Sys\" di Pengaturan diganti dengan kode baru atas nama PY-Sys, Service.",
+                "The \"Support PY-Sys development\" QRIS code in Settings now uses the new PY-Sys, Service merchant."),
         Change("1.7.2", "Empat pilihan baru di menu bar: titik warna tekanan memori, jumlah app beku, baterai (% dan sisa waktu), dan ruang disk tersisa. Nama kontributor tampil di Pengaturan dan jendela Tentang.",
                 "Four new menu bar options: a memory pressure dot, frozen app count, battery (% and time left), and free disk space. Contributor name shown in Settings and the About window."),
         Change("1.7.1", "Ekspor/impor pengaturan untuk pindah Mac atau cadangan. Laporan masalah sederhana: pemberitahuan setelah crash, salin, simpan, atau laporkan di GitHub. Teks riwayat 1.6.7 diperbaiki (20 detik).",

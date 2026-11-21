@@ -1,4 +1,4 @@
-PY-Sys 1.7.2 — cara memasang
+PY-Sys 1.7.3 — cara memasang
 ======================
 
 1. Seret PY-Sys ke folder Applications (di jendela ini).
@@ -83,3 +83,6 @@ Baru di versi 1.7.1
 Baru di versi 1.7.2
    • Pilihan baru di menu bar (Pengaturan → Tampilan di menu bar): titik warna tekanan memori, jumlah app beku ❄︎, baterai (% dan sisa waktu), dan ruang disk tersisa.
    • Nama kontributor tampil di Pengaturan dan jendela Tentang.
+
+Baru di versi 1.7.3
+   • QRIS "Dukung pengembangan PY-Sys" di Pengaturan diganti dengan kode baru atas nama PY-Sys, Service.
